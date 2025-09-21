@@ -74,6 +74,7 @@ let shakeRange =
  */
 function setup() {
   createCanvas(400, 400);
+// his physical compulsion to this terrible flying creature
  function shake()
     {
      shakeV= {
@@ -102,6 +103,7 @@ function seethingRAGE()
 }
 
 function limiter() {
+    // doesnt work either(contains his spartan like rage so he doesnt go out of his little world)
     mrFurious.y = constrain(mrFurious.x,(shakeRange.xMin - shake.RAGE),(shakeRange.xMax + shake.RAGE))
     mrFurious.x = constrain(mrFurious.y, (shakeRange.yMin - shake.RAGE), (shakeRange.yMax + shake.RAGE))
 }
@@ -116,6 +118,7 @@ function birdPath()
 function birdDraw()
 {
 ellipse(annoyingBird.x, annoyingBird.y, annoyingBird.size)
+// this also does not work (goal was to make the wing and have it follow the birds main body)
 rect((annoyingBird.x - annoyingBird.wingX),(annoyingBird.y - annoyingBird.wingy),annoyingBird.wingSize)
 }
 /**
@@ -129,13 +132,6 @@ function draw()
   shake()
   seethingRAGE();
   limiter();
-  
- 
-  
-
-  
-  
-  
   
   //decreases shades of green and blue
   mrFurious.fill.g -= shadeRate

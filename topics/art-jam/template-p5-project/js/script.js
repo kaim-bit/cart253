@@ -1,24 +1,23 @@
 /**
- * Title of Project
- * Author Name
+ * Art Jam
+ * Kai Maquivar
  * 
- * HOW EMBARRASSING! I HAVE NO DESCRIPTION OF MY PROJECT!
- * PLEASE REMOVE A GRADE FROM MY WORK IF IT'S GRADED!
+ * a portrait of me! with some other fun mechanics
  */
 
 "use strict";
 
 /**
- * OH LOOK I DIDN'T DESCRIBE SETUP!!
+ * setting up the canvas to draw on
 */
 function setup() {
-
+    createCanvas(600,600)
 }
 
 
 /**
- * OOPS I DIDN'T DESCRIBE WHAT MY DRAW DOES!
+ * every frame creating and coloring shapes
 */
 function draw() {
-
+ backround(0,0,2)
 }
