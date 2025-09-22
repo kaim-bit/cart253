@@ -33,14 +33,14 @@ function secret_skeleton()
     stroke('white')
     strokeWeight(10);
     fill(255,255,255)
-    line(220,250,300,220)
+    line(220,250,300,270)
     pop()
 
      push()
     stroke('white')
     strokeWeight(10);
     fill(255,255,255)
-    line(400,250,320,220)
+    line(400,250,320,270)
     pop()
 
     //ribcage
