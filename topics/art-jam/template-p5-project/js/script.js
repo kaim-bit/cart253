@@ -27,6 +27,7 @@ function secret_skeleton()
     noStroke()
     fill(255,255,255)
     rect(300,200,20,400)
+    pop()
 
     // collar bone
     push()
@@ -36,7 +37,7 @@ function secret_skeleton()
     line(220,250,300,270)
     pop()
 
-     push()
+    push()
     stroke('white')
     strokeWeight(10);
     fill(255,255,255)
@@ -44,24 +45,44 @@ function secret_skeleton()
     pop()
 
     //ribcage
+    push()
+    noStroke()
     fill(255,255,255)
     rect(210,250,200,10)
+    pop()
 
+    push()
+    noStroke()
     fill(255,255,255)
     rect(210,270,200,10)
+    pop()
 
+    push()
+    noStroke()
     fill(255,255,255)
     rect(210,290,200,10)
+    pop()
 
+    push()
+    noStroke()
     fill(255,255,255)
     rect(210,310,200,10)
+    pop()
 
+    push()
+    noStroke()
     fill(255,255,255)
     rect(210,330,200,10)
+    pop()
 
+    push()
+    noStroke()
     fill(255,255,255)
     rect(210,360,200,10)
+    pop()
 
+    push()
+    noStroke()
     fill(255,255,255)
     rect(210,390,200,10)
     pop()
@@ -71,10 +92,16 @@ function secret_skeleton()
     noStroke()
     fill(255,255,255)
     rect(210,550,200,100)
+    pop()
     
+    push()
+    noStroke()
     fill(100,0,0)
     ellipse(240,590,20,50)
+    pop()
 
+    push()
+    noStroke()
     fill(100,0,0)
     ellipse(380,590,20,50)
     pop()
@@ -82,19 +109,30 @@ function secret_skeleton()
         // head
     //jaw
 
-
+    push()
     noStroke()
     fill(255,255,255)
     ellipse(310,150,80,130)
     pop()
+    
     //skull
+    push()
+    noStroke()
     fill(255,255,255)
     ellipse(310,130,90)
+    pop()
     
-     fill(0,0,0)
+    push()
+    noStroke()
+    fill(0,0,0)
     ellipse(290,130,15)
-     fill(0,0,0)
+    pop()
+
+    push()
+    noStroke()
+    fill(0,0,0)
     ellipse(330,130,15)
+    pop()
 
     push()
     noStroke()
@@ -104,6 +142,14 @@ function secret_skeleton()
 }
     function faceDraw()
     {
+
+    //neck
+    push()
+    noStroke()
+    fill("tan")
+    rect(285,200,50,60)
+    pop()
+
     //face skin
     push()
     noStroke()
@@ -116,41 +162,87 @@ function secret_skeleton()
     noStroke()
     fill(255,215,174)
     ellipse(260,145,20,30)
+    pop()
 
+    push()
+    noStroke()
     fill(255,215,174)
     ellipse(360,145,20,30)
     pop()
 
-    push()
-    noStroke()
-    fill(255, 200, 164)
-    ellipse(260,145,20,30)
-    
 
-    //neck
-    push()
-    noStroke()
-    fill(255,215,174)
-    rect(285,200,50,60)
-    pop()
+    
 
     //eyes
     push()
     noStroke()
     fill(255,255,255)
     ellipse(290,130,20,10)
+    pop()
 
+    push()
+    noStroke()
     fill(255,255,255)
     ellipse(330,130,20,10)
     pop()
+
+    // pupils
+    push()
+    noStroke()
+    fill("#140d07")
+    ellipse(330,130,10,5)
+    pop()
+
+    push()
+    noStroke()
+    fill("#140d07")
+    ellipse(290,130,10,5)
+    pop()
     }
 
-    tshirtDraw()
+    function tshirtDraw()
     {
      push()
      noStroke()
      fill(34, 139, 34)
-     rect(300,100,100,200)
+     rect(205,230,210,400)
+     pop()
+
+    push()
+    stroke(100,0,0)
+    strokeWeight(31);
+    fill(255,255,255)
+    line(430,250,350,230)
+    pop()
+
+     push()
+    stroke(100,0,0)
+    strokeWeight(31);
+    fill(255,255,255)
+    line(270,230,150,255)
+    pop()
+
+    push()
+    stroke(100,0,0)
+    strokeWeight(31);
+    fill(255,255,255)
+    line(470,400,400,200)
+    pop()
+
+    push()
+    stroke(100,0,0)
+    strokeWeight(31);
+    fill(255,255,255)
+    line(470,400,400,200)
+    pop()
+
+    push()
+    stroke(100,0,0)
+    strokeWeight(31);
+    fill(255,255,255)
+    line(130,400,230,200)
+    pop()
+
     }
 
 /**
