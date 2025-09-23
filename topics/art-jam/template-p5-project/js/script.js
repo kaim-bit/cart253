@@ -11,7 +11,7 @@
  * setting up the canvas to draw on
 */
 function setup() {
-    createCanvas(600,600)
+    createCanvas(600,400)
 }
 // draws the backround color
 function backround_draw()
@@ -87,12 +87,6 @@ function secret_skeleton()
     fill(255,255,255)
     ellipse(310,150,80,130)
     pop()
-
-    
-    
-
-   
-
     //skull
     fill(255,255,255)
     ellipse(310,130,90)
@@ -106,24 +100,59 @@ function secret_skeleton()
     noStroke()
     fill(0,0,0)
     rect(290,170,40,5)
+    pop()
+}
+    function faceDraw()
+    {
+    //face skin
     push()
+    noStroke()
+    fill(255,215,174)
+    ellipse(310,145,100,135)
+    pop()
 
+    //ears
+    push()
+    noStroke()
+    fill(255,215,174)
+    ellipse(260,145,20,30)
 
+    fill(255,215,174)
+    ellipse(360,145,20,30)
+    pop()
 
-
-
-
-
-
-
-
-
-   
-
+    push()
+    noStroke()
+    fill(255, 200, 164)
+    ellipse(260,145,20,30)
     
 
+    //neck
+    push()
+    noStroke()
+    fill(255,215,174)
+    rect(285,200,50,60)
+    pop()
 
-}
+    //eyes
+    push()
+    noStroke()
+    fill(255,255,255)
+    ellipse(290,130,20,10)
+
+    fill(255,255,255)
+    ellipse(330,130,20,10)
+    pop()
+    }
+
+    tshirtDraw()
+    {
+     push()
+     noStroke()
+     fill(34, 139, 34)
+     rect(300,100,100,200)
+    }
+
 /**
  * every frame creating and coloring shapes
 */
@@ -131,4 +160,7 @@ function draw()
 {
  backround_draw()
  secret_skeleton()
+ faceDraw()
+ tshirtDraw()
+
 }
