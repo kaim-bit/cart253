@@ -15,6 +15,7 @@ This description should help the reader understand what the program is, anything
 > The project is meant to give the user a sense of what it would be the mayor of a town of clowns, eventually getting the sense that clowns are not taking their civic duties seriously.
 
 ## Screenshot(s)
+this is a test
 
 This bit should have some images of the program running so that the reader has a sense of what it looks like. For example:
 
