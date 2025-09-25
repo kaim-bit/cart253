@@ -200,12 +200,20 @@ function secret_skeleton()
     pop()
     }
 
+
+
+  const tshirt= {
+  x: 205,
+  y: 230,
+  width: 210,
+  height: 400
+   };
     function tshirtDraw()
     {
      push()
-     noStroke()
+     noStroke() 
      fill(34, 139, 34)
-     rect(205,230,210,400)
+     rect(tshirt.x,tshirt.y,tshirt.width,tshirt.height)
      pop()
 
     push()
@@ -253,6 +261,55 @@ function draw()
  backround_draw()
  secret_skeleton()
  faceDraw()
+
+
+
+ moveUser()
  tshirtDraw()
+ drawUser()
+  moveTshirt()
+
+
+ 
+ 
+
 
 }
+
+/**
+ * Sets the user position to the mouse position
+ */
+function moveUser() 
+{
+  user.x = mouseX;
+  user.y = mouseY;
+}
+
+const user = 
+{
+  x: undefined, // will be mouseX
+  y: undefined, // will be mouseY
+  size: 25,
+  fill: "#000000"
+};
+
+function drawUser() {
+  push();
+  noStroke();
+  fill(user.fill);
+  ellipse(user.x, user.y, user.size);
+  pop();
+}
+
+function moveTshirt()
+{
+const d = dist(tshirt.x, tshirt.y, user.x, user.y)
+const overL = (d < user.size/4 + tshirt.height/4);
+
+if (overL)
+{
+    tshirt.x += (user.x - tshirt.x) /4
+    tshirt.y += (user.y - tshirt.y) /4
+}
+}
+
