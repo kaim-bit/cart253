@@ -147,7 +147,7 @@ function faceDraw() {
     push()
     noStroke()
     fill("tan")
-    rect(285, 200, 50, 60)
+    rect(285, 200, 50, 50)
     pop()
 
     //face skin
@@ -214,49 +214,54 @@ function faceDraw() {
 
 
 const tshirt = {
-    x: 205,
-    y: 230,
-    width: 205,
+    x: 308,
+    y: 340,
+    width: 210,
     height: 200,
-    lineYOff: 32
+    lineYOff: 32,
+    centerOff: 100,
+    tshirtX1Nudge: 5
 };
 function tshirtDraw() {
     //shirt itself
     push()
     noStroke()
     fill(34, 139, 34)
+    rectMode(CENTER)
     rect(tshirt.x, tshirt.y, tshirt.width, tshirt.height)
-    rect(CENTER)
+
     pop()
 
 
     // cutting of the tshirt
+
     push()
     stroke(100, 0, 0)
     strokeWeight(31);
     fill(100, 255, 255)
-    line(430 + ((tshirt.x - tshirt.width)), 250 + ((tshirt.y - tshirt.height) - tshirt.lineYOff), 350 + (tshirt.x - tshirt.width), 230 + ((tshirt.y - tshirt.height) - tshirt.lineYOff))
+    line(430 + ((tshirt.x - tshirt.width) - tshirt.centerOff), 250 + ((tshirt.y - tshirt.height) - tshirt.lineYOff) - tshirt.centerOff, 350 + (tshirt.x - tshirt.width) - tshirt.centerOff, 230 + ((tshirt.y - tshirt.height) - tshirt.lineYOff) - tshirt.centerOff)
     pop()
 
     push()
     stroke(100, 0, 0)
     strokeWeight(31);
     fill(255, 255, 255)
-    line(270 + ((tshirt.x - tshirt.width)), 230 + ((tshirt.y - tshirt.height) - tshirt.lineYOff), 150 + (tshirt.x - tshirt.width), 255 + ((tshirt.y - tshirt.height) - tshirt.lineYOff))
+    line(270 + ((tshirt.x - tshirt.width)) - tshirt.centerOff, 230 + ((tshirt.y - tshirt.height) - tshirt.lineYOff) - tshirt.centerOff, 150 + (tshirt.x - tshirt.width) - tshirt.centerOff, 255 + ((tshirt.y - tshirt.height) - tshirt.lineYOff) - tshirt.centerOff)
     pop()
 
     push()
     stroke(100, 0, 0)
     strokeWeight(31);
     fill(255, 255, 255)
-    line(470 + ((tshirt.x - tshirt.width) + 5), 400 + ((tshirt.y - tshirt.height) - tshirt.lineYOff), 400 + (tshirt.x - tshirt.width), 200 + ((tshirt.y - tshirt.height) - tshirt.lineYOff))
+    line(460 + ((tshirt.x - tshirt.width) + tshirt.tshirtX1Nudge) - tshirt.centerOff, 400 + ((tshirt.y - tshirt.height) - tshirt.lineYOff) - tshirt.centerOff, 390 + (tshirt.x - tshirt.width) - tshirt.centerOff, 200 + ((tshirt.y - tshirt.height) - tshirt.lineYOff) - tshirt.centerOff)
     pop()
+
 
     push()
     stroke(100, 0, 0)
     strokeWeight(31);
     fill(255, 255, 255)
-    line(130 + ((tshirt.x - tshirt.width) + 5), 400 + ((tshirt.y - tshirt.height) - tshirt.lineYOff), 230 + (tshirt.x - tshirt.width), 200 + ((tshirt.y - tshirt.height) - tshirt.lineYOff))
+    line(130 + ((tshirt.x - tshirt.width) + tshirt.tshirtX1Nudge) - tshirt.centerOff, 400 + ((tshirt.y - tshirt.height) - tshirt.lineYOff) - tshirt.centerOff, 230 + (tshirt.x - tshirt.width) - tshirt.centerOff, 200 + ((tshirt.y - tshirt.height) - tshirt.lineYOff) - tshirt.centerOff)
     pop()
 
 
@@ -270,16 +275,18 @@ function tshirtDraw() {
  * every frame creating and coloring shapes
 */
 function draw() {
+
+    cursor(CROSS);
     backround_draw()
     secret_skeleton()
-    faceDraw()
-
-
-
-    moveUser()
     tshirtDraw()
+
+    faceDraw()
+    moveUser()
     drawUser()
     moveTshirt()
+    drawClock()
+    moveClockHand()
 
 
 
@@ -312,9 +319,84 @@ function drawUser() {
     pop();
 }
 
+// moves clockhand around clock
+function moveClockHand() {
+    clock.clockhandY = constrain(clock.clockhandY, 50, 150)
+    clock.clockhandX = constrain(clock.clockhandX, 475, 575)
+
+    if (clock.twelveToSixY && clock.nineToThree && clock.clockHalfManager) {
+        clock.clockhandY += clock.tick
+        clock.clockhandX += clock.tick
+        if (clock.clockhandX >= 575 && clock.clockhandY >= 100) {
+            clock.nineToThree = false
+            clock.twelveToSixY = true
+            clock.clockHalfManager = true
+        }
+    }
+    if (clock.twelveToSixY && !clock.nineToThree && clock.clockHalfManager) {
+        clock.clockhandY += clock.tick
+        clock.clockhandX -= clock.tick
+        if (clock.clockhandX <= 525 && clock.clockhandY >= 150) {
+            clock.nineToThree = false
+            clock.twelveToSixY = false
+            clock.clockHalfManager = false
+        }
+    }
+    if (!clock.twelveToSixY && !clock.nineToThree && !clock.clockHalfManager) {
+        clock.clockhandY -= clock.tick
+        clock.clockhandX -= clock.tick
+        if (clock.clockhandX <= 475 && clock.clockhandY <= 100) {
+            clock.nineToThree = false
+            clock.twelveToSixY = true
+            clock.clockHalfManager = false
+        }
+    }
+    if (clock.twelveToSixY && !clock.nineToThree && !clock.clockHalfManager) {
+        clock.clockhandY -= clock.tick
+        clock.clockhandX += clock.tick
+        if (clock.clockhandX >= 525 && clock.clockhandY <= 50) {
+            clock.nineToThree = true
+            clock.twelveToSixY = true
+            clock.clockHalfManager = true
+            clock.tick += 0.1
+        }
+    }
+}
+
+const clock =
+{
+
+    clockhandStrokeWeight: 2,
+    clockhandYStag: 100,
+    clockhandXStag: 525,
+    clockhandY: 50,
+    clockhandX: 525,
+
+    tick: 1,
+
+    twelveToSixY: true,
+    nineToThree: true,
+    clockHalfManager: true
+
+
+}
+
+function drawClock() {
+    push()
+    ellipse(525, 100, 100)
+    fill(255, 255, 255)
+    pop()
+
+    push()
+    stroke(20, 20, 0)
+    strokeWeight(clock.clockhandStrokeWeight);
+    line(clock.clockhandXStag, clock.clockhandYStag, clock.clockhandX, clock.clockhandY)
+    pop()
+}
+
 function moveTshirt() {
     const d = dist(tshirt.x, tshirt.y, user.x, user.y)
-    const overL = (d < user.size / 4 + tshirt.height / 4);
+    const overL = (d < user.size / 2 + tshirt.width / 2);
 
     if (overL) {
         tshirt.x += (user.x - tshirt.x) / 4
