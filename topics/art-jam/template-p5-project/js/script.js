@@ -323,6 +323,7 @@ function drawUser() {
 function moveClockHand() {
     clock.clockhandY = constrain(clock.clockhandY, 50, 150)
     clock.clockhandX = constrain(clock.clockhandX, 475, 575)
+    clock.tick = constrain(clock.tick, 1, 15)
 
     if (clock.twelveToSixY && clock.nineToThree && clock.clockHalfManager) {
         clock.clockhandY += clock.tick
@@ -358,7 +359,7 @@ function moveClockHand() {
             clock.nineToThree = true
             clock.twelveToSixY = true
             clock.clockHalfManager = true
-            clock.tick += 0.1
+            clock.tick += 0.5
         }
     }
 }
