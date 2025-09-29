@@ -3,6 +3,10 @@
  * Kai Maquivar
  * 
  * a portrait of me! with some other fun mechanics
+ * 
+ * 
+ * hover over the middle of the tshirt to pick up, quickly swipe off of it to drop
+ * every full clock rotation the clock gets faster
  */
 
 "use strict";
@@ -19,7 +23,7 @@ function backround_draw() {
 }
 
 //secret skeleton draw
-function secret_skeleton() {
+function drawSkeleton() {
     //spine
     push()
     noStroke()
@@ -141,6 +145,7 @@ function secret_skeleton() {
 
 
 }
+//draws the face
 function faceDraw() {
 
     //neck
@@ -212,7 +217,19 @@ function faceDraw() {
 }
 
 
+// preloads the image for the hair
+let img;
+function preload() {
+    img = loadImage("hair.png")
+}
 
+//puts the hair in the drawing
+function hairDraw() {
+    image(img, 50, -170, 500, 500)
+
+}
+
+// tshirt variables
 const tshirt = {
     x: 308,
     y: 340,
@@ -222,6 +239,7 @@ const tshirt = {
     centerOff: 100,
     tshirtX1Nudge: 5
 };
+//drawing the tshirt
 function tshirtDraw() {
     //shirt itself
     push()
@@ -229,11 +247,12 @@ function tshirtDraw() {
     fill(34, 139, 34)
     rectMode(CENTER)
     rect(tshirt.x, tshirt.y, tshirt.width, tshirt.height)
-
     pop()
 
 
     // cutting of the tshirt
+
+    // LINE STUFF -  basically because i wanted to have the cursor to go to the middle of the tshirt before moving, and have the tshirt cut lines follow the main tshirt block, i just did some math to make it follow, its overly complicated and lowkey ugly
 
     push()
     stroke(100, 0, 0)
@@ -267,26 +286,34 @@ function tshirtDraw() {
 
 }
 
-//drawHair(){
 
-//}
 
 /*
  * every frame creating and coloring shapes
 */
 function draw() {
-
+    // cool cursor setting
     cursor(CROSS);
+    //backround
     backround_draw()
-    secret_skeleton()
+    //skeleton
+    drawSkeleton()
+    //tshirt
     tshirtDraw()
-
+    //face
     faceDraw()
+    //cursor movement
     moveUser()
+    //visual cursor
     drawUser()
+    //tshirt movement
     moveTshirt()
+    //clock
     drawClock()
+    //clock mech
     moveClockHand()
+    //hair
+    hairDraw()
 
 
 
@@ -303,6 +330,7 @@ function moveUser() {
     user.y = mouseY;
 }
 
+//user variables
 const user =
 {
     x: 10, // will be mouseX
@@ -311,6 +339,7 @@ const user =
     fill: "#000000"
 };
 
+//drawing the cursor
 function drawUser() {
     push();
     noStroke();
@@ -321,9 +350,15 @@ function drawUser() {
 
 // moves clockhand around clock
 function moveClockHand() {
+    //constrains the clock hands so they dont fly off the screen
     clock.clockhandY = constrain(clock.clockhandY, 50, 150)
     clock.clockhandX = constrain(clock.clockhandX, 475, 575)
+    //constrains the speed of the clock
     clock.tick = constrain(clock.tick, 1, 15)
+
+
+    // clock logic, 3 booleans to control the 4 sections of the clock(TR,BR,BL,TL), HalfManager is to deny the logic from going back because some segements need to have the same bolean arguments as others
+
 
     if (clock.twelveToSixY && clock.nineToThree && clock.clockHalfManager) {
         clock.clockhandY += clock.tick
@@ -364,6 +399,7 @@ function moveClockHand() {
     }
 }
 
+// clock variables
 const clock =
 {
 
@@ -382,6 +418,7 @@ const clock =
 
 }
 
+//draws the clock
 function drawClock() {
     push()
     ellipse(525, 100, 100)
@@ -395,6 +432,7 @@ function drawClock() {
     pop()
 }
 
+// this gets the position to the tshirt and starts the process of manipulating the location
 function moveTshirt() {
     const d = dist(tshirt.x, tshirt.y, user.x, user.y)
     const overL = (d < user.size / 2 + tshirt.width / 2);
