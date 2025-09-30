@@ -12,7 +12,7 @@ let score = 0;
 
 // Is the game over?
 let gameOver = false;
-
+/*
 function mouseClicked() {
     lose()
 }
@@ -26,6 +26,36 @@ function keyPressed() {
 
     lose()
 }
+
+
+if (navigator.onLine == false) {
+    lose()
+    console.log("offline")
+}
+    
+    */
+document.addEventListener("mousedown", () => {
+    lose()
+})
+document.addEventListener("mousemove", () => {
+    lose()
+})
+document.addEventListener("resize", () => {
+    lose()
+})
+
+document.addEventListener("offline", () => {
+    lose()
+})
+
+document.addEventListener("keypress", () => {
+    lose()
+})
+
+document.addEventListener("visibilitychange", () => {
+    lose()
+})
+
 /**
  * Create the canvas
  */
