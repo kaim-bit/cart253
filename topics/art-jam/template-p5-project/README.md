@@ -2,7 +2,7 @@
 
 Kai Maquivar
 
-[View this project online](URL_FOR_THE_RUNNING_PROJECT)
+[View this project online](https://kaim-bit.github.io/cart253/topics/art-jam/template-p5-project)
 
 ## Description
 

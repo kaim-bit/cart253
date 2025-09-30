@@ -17,12 +17,16 @@
 function setup() {
     createCanvas(600, 400)
 }
-// draws the backround color
+/**
+ * draws the backround
+ */
 function backround_draw() {
     background(100, 0, 0)
 }
 
-//secret skeleton draw
+/**
+ * secret skeleton draw
+ */
 function drawSkeleton() {
     //spine
     push()
@@ -145,7 +149,9 @@ function drawSkeleton() {
 
 
 }
-//draws the face
+/**
+ * draws the face
+ */
 function faceDraw() {
 
     //neck
@@ -217,19 +223,25 @@ function faceDraw() {
 }
 
 
-// preloads the image for the hair
+/**
+ * preloads the image for the hair
+ */
 let img;
 function preload() {
     img = loadImage("hair.png")
 }
 
-//puts the hair in the drawing
+/**
+ * draws the hair
+ */
 function hairDraw() {
     image(img, 50, -170, 500, 500)
 
 }
 
-// tshirt variables
+/**
+ * tshirt variables
+ */
 const tshirt = {
     x: 308,
     y: 340,
@@ -239,7 +251,9 @@ const tshirt = {
     centerOff: 100,
     tshirtX1Nudge: 5
 };
-//drawing the tshirt
+/**
+ * drawing the tshirt
+ */
 function tshirtDraw() {
     //shirt itself
     push()
@@ -339,7 +353,9 @@ const user =
     fill: "#000000"
 };
 
-//drawing the cursor
+/**
+ * drawing the user
+ */
 function drawUser() {
     push();
     noStroke();
@@ -348,7 +364,9 @@ function drawUser() {
     pop();
 }
 
-// moves clockhand around clock
+/**
+ * moves the clockhand around the clock
+ */
 function moveClockHand() {
     //constrains the clock hands so they dont fly off the screen
     clock.clockhandY = constrain(clock.clockhandY, 50, 150)
@@ -399,7 +417,9 @@ function moveClockHand() {
     }
 }
 
-// clock variables
+/**
+ * clock variables
+ */
 const clock =
 {
 
@@ -418,7 +438,10 @@ const clock =
 
 }
 
-//draws the clock
+
+/**
+ * draws the clock
+ */
 function drawClock() {
     push()
     ellipse(525, 100, 100)
@@ -432,7 +455,9 @@ function drawClock() {
     pop()
 }
 
-// this gets the position to the tshirt and starts the process of manipulating the location
+/**
+ * finds the distance between the tshirt and user, when in range "selects" the tshirt to move
+ */
 function moveTshirt() {
     const d = dist(tshirt.x, tshirt.y, user.x, user.y)
     const overL = (d < user.size / 2 + tshirt.width / 2);
