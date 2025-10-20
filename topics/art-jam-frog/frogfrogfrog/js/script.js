@@ -1,4 +1,5 @@
 /**
+ * ORIGINAL WORK
  * Frogfrogfrog
  * Pippin Barr
  * 
@@ -11,6 +12,15 @@
  * 
  * Made with p5
  * https://p5js.org/
+ */
+
+/**
+ * Modded frogfrogfrog
+ * Kai Maquivar
+ * 
+ * New mechanics:
+ * 
+ * 
  */
 
 "use strict";
@@ -128,7 +138,6 @@ function moveTongue() {
             frog.tongue.state = "idle";
         }
     }
-
 }
 
 /**
@@ -142,13 +151,12 @@ function drawFrog() {
     ellipse(frog.tongue.x, frog.tongue.y, frog.tongue.size);
     pop();
 
-    /* Draw the rest of the tongue
+    // Draw the rest of the tongue
     push();
     stroke("#ff0000");
     strokeWeight(frog.tongue.size);
     line(frog.tongue.x, frog.tongue.y, frog.body.x, frog.body.y);
     pop();
-    */
 
     // Draw the frog's body
     push();
@@ -165,7 +173,7 @@ function checkTongueFlyOverlap() {
     // Get distance from tongue to fly
     const d = dist(frog.tongue.x, frog.tongue.y, fly.x, fly.y);
     // Check if it's an overlap
-    const eaten = (d < frog.tongue.size / 2 + fly.size / 2);
+    const eaten = (d < frog.tongue.size/2 + fly.size/2);
     if (eaten) {
         // Reset the fly
         resetFly();
