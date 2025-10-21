@@ -16,7 +16,7 @@
 "use strict";
 
 // Our frog
-const frog = {
+const cannon = {
     // The frog's body has a position and size
     body: {
         x: 320,
@@ -24,7 +24,7 @@ const frog = {
         size: 150
     },
     // The frog's tongue has a position, size, speed, and state
-    tongue: {
+    cannonball: {
         x: undefined,
         y: 480,
         size: 20,
@@ -42,6 +42,18 @@ const fly = {
     size: 10,
     speed: 3
 };
+const pill = {
+    pillManager:0,
+    
+}
+const cannonPill =
+{
+    x: 50,
+    y: 200, // Will be random
+    size: 30,
+    speed: 3,
+    hitCount: 0
+}
 
 /**
  * Creates the canvas and initializes the fly
@@ -57,10 +69,12 @@ function draw() {
     background("#87ceeb");
     moveFly();
     drawFly();
-    moveFrog();
-    moveTongue();
-    drawFrog();
-    checkTongueFlyOverlap();
+    moveCannon();
+    moveCannonBall();
+    drawCannon();
+    drawCannonPill();
+    checkCannonBallFlyOverlap();
+    checkCannonBallPillOverlap()
 }
 
 /**
@@ -87,45 +101,61 @@ function drawFly() {
     pop();
 }
 
+function drawCannonPill() {
+    push();
+    noStroke();
+    fill("green");
+    ellipse(cannonPill.x, cannonPill.y, cannonPill.size);
+    pop();
+}
+
 /**
  * Resets the fly to the left with a random y
  */
 function resetFly() {
     fly.x = 0;
     fly.y = random(0, 300);
+    fly.speed = random(4, 6)
+}
+
+function resetCannonPill() {
+    cannonPill.x = 0;
+    cannonPill.y = random(0, 5000);
+    cannonPill.speed = random(4, 8)
 }
 
 /**
  * Moves the frog to the mouse position on x
  */
-function moveFrog() {
-    frog.body.x = mouseX;
+function moveCannon() {
+    cannon.body.x = mouseX;
 }
 
 /**
- * Handles moving the tongue based on its state
+ * Handles moving the rock based on where the frog is
  */
-function moveTongue() {
+function moveCannonBall() {
     // Tongue matches the frog's x
-    frog.tongue.x = frog.body.x;
-    // If the tongue is idle, it doesn't do anything
-    if (frog.tongue.state === "idle") {
-        // Do nothing
+
+    // If the rock is idle, it doesn't do anything
+    if (cannon.cannonball.state === "idle") {
+        // rock matches the frog's x
+        cannon.cannonball.x = cannon.body.x;
     }
     // If the tongue is outbound, it moves up
-    else if (frog.tongue.state === "outbound") {
-        frog.tongue.y += -frog.tongue.speed;
+    else if (cannon.cannonball.state === "outbound") {
+        cannon.cannonball.y += -cannon.cannonball.speed;
         // The tongue bounces back if it hits the top
-        if (frog.tongue.y <= 0) {
-            frog.tongue.state = "inbound";
+        if (cannon.cannonball.y <= 0) {
+            cannon.cannonball.state = "inbound";
         }
     }
     // If the tongue is inbound, it moves down
-    else if (frog.tongue.state === "inbound") {
-        frog.tongue.y += frog.tongue.speed;
+    else if (cannon.cannonball.state === "inbound") {
+        cannon.cannonball.y += cannon.cannonball.speed;
         // The tongue stops if it hits the bottom
-        if (frog.tongue.y >= height) {
-            frog.tongue.state = "idle";
+        if (cannon.cannonball.y >= height) {
+            cannon.cannonball.state = "idle";
         }
     }
 
@@ -134,43 +164,55 @@ function moveTongue() {
 /**
  * Displays the tongue (tip and line connection) and the frog (body)
  */
-function drawFrog() {
+function drawCannon() {
     // Draw the tongue tip
     push();
-    fill("#ff0000");
+    fill("gray");
     noStroke();
-    ellipse(frog.tongue.x, frog.tongue.y, frog.tongue.size);
+    ellipse(cannon.cannonball.x, cannon.cannonball.y, cannon.cannonball.size);
     pop();
 
-    /* Draw the rest of the tongue
-    push();
-    stroke("#ff0000");
-    strokeWeight(frog.tongue.size);
-    line(frog.tongue.x, frog.tongue.y, frog.body.x, frog.body.y);
-    pop();
-    */
 
     // Draw the frog's body
     push();
     fill("#00ff00");
     noStroke();
-    ellipse(frog.body.x, frog.body.y, frog.body.size);
+    ellipse(cannon.body.x, cannon.body.y, cannon.body.size);
     pop();
 }
 
 /**
  * Handles the tongue overlapping the fly
  */
-function checkTongueFlyOverlap() {
+function checkCannonBallFlyOverlap() {
     // Get distance from tongue to fly
-    const d = dist(frog.tongue.x, frog.tongue.y, fly.x, fly.y);
+    const d = dist(cannon.cannonball.x, cannon.cannonball.y, fly.x, fly.y);
     // Check if it's an overlap
-    const eaten = (d < frog.tongue.size / 2 + fly.size / 2);
+    const eaten = (d < cannon.cannonball.size / 2 + fly.size / 2);
     if (eaten) {
         // Reset the fly
         resetFly();
+        cannonPill.hitCount += 1;
+        // Bring back the cannonball
+        cannon.cannonball.state = "inbound";
+        if (cannonPill.hitCount >= 5) {
+            cannon.cannonball.size = 20;
+        }
+    }
+}
+
+function checkCannonBallPillOverlap() {
+    // Get distance from tongue to fly
+    const cPillD = dist(cannon.cannonball.x, cannon.cannonball.y, cannonPill.x, cannonPill.y);
+    // Check if it's an overlap
+    const cPillEaten = (cPillD < cannon.cannonball.size / 2 + cannonPill.size / 2);
+    if (cPillEaten) {
         // Bring back the tongue
-        frog.tongue.state = "inbound";
+        cannon.cannonball.state = "inbound";
+        // gives size buff to cannonball
+        cannon.cannonball.size = 30;
+        resetCannonPill()
+
     }
 }
 
@@ -178,7 +220,7 @@ function checkTongueFlyOverlap() {
  * Launch the tongue on click (if it's not launched yet)
  */
 function mousePressed() {
-    if (frog.tongue.state === "idle") {
-        frog.tongue.state = "outbound";
+    if (cannon.cannonball.state === "idle") {
+        cannon.cannonball.state = "outbound";
     }
 }
