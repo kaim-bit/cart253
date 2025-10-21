@@ -43,8 +43,8 @@ const fly = {
     speed: 3
 };
 const pill = {
-    pillManager:0,
-    
+    pillManager: 0,
+
 }
 const cannonPill =
 {
