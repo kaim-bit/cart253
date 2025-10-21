@@ -43,8 +43,10 @@ const fly = {
     speed: 3
 };
 const pill = {
-    pillManager: 0,
-
+    manager: 0,
+    pick: 0,
+    x: 0,
+    y: 0
 }
 const cannonPill =
 {
@@ -52,13 +54,17 @@ const cannonPill =
     y: 200, // Will be random
     size: 30,
     speed: 3,
-    hitCount: 0
+    hitCount: 0,
+    sizeBuff: 50,
+    lastingRate: 0
 }
 
 /**
  * Creates the canvas and initializes the fly
  */
 function setup() {
+    resetCannonPill()
+
     createCanvas(640, 480);
 
     // Give the fly its first random position
@@ -119,9 +125,21 @@ function resetFly() {
 }
 
 function resetCannonPill() {
-    cannonPill.x = 0;
-    cannonPill.y = random(0, 5000);
-    cannonPill.speed = random(4, 8)
+    cannonPill.x = 2000;
+    cannonPill.y = 5000;
+}
+
+
+function spawnPill() {
+    pill.pick = 1
+    pill.x = random(10, 400)
+    pill.y = random(10, 400)
+
+    //spawns cannon pill
+    if (pill.pick == 1) {
+        cannonPill.x = pill.x
+        cannonPill.y = pill.y
+    }
 }
 
 /**
@@ -192,11 +210,18 @@ function checkCannonBallFlyOverlap() {
     if (eaten) {
         // Reset the fly
         resetFly();
-        cannonPill.hitCount += 1;
+        pill.manager += 1;
         // Bring back the cannonball
         cannon.cannonball.state = "inbound";
-        if (cannonPill.hitCount >= 5) {
-            cannon.cannonball.size = 20;
+        if (pill.manager % 10 === 0) {
+            spawnPill()
+        }
+        // makes the pill wear off after 5 flys killed
+        if (cannon.cannonball.size == cannonPill.sizeBuff) {
+            cannonPill.lastingRate += 1
+            if (cannonPill.lastingRate === 5) {
+                cannon.cannonball.size = 20
+            }
         }
     }
 }
@@ -206,13 +231,13 @@ function checkCannonBallPillOverlap() {
     const cPillD = dist(cannon.cannonball.x, cannon.cannonball.y, cannonPill.x, cannonPill.y);
     // Check if it's an overlap
     const cPillEaten = (cPillD < cannon.cannonball.size / 2 + cannonPill.size / 2);
+
     if (cPillEaten) {
         // Bring back the tongue
         cannon.cannonball.state = "inbound";
         // gives size buff to cannonball
-        cannon.cannonball.size = 30;
+        cannon.cannonball.size = cannonPill.sizeBuff;
         resetCannonPill()
-
     }
 }
 
