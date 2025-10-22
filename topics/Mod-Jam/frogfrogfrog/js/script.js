@@ -12,7 +12,6 @@
  * Made with p5
  * https://p5js.org/
  */
-
 "use strict";
 
 // Our frog
@@ -27,7 +26,7 @@ const cannon = {
     cannonball: {
         x: undefined,
         y: 480,
-        size: 20,
+        size: 35,
         speed: 20,
         // Determines how the tongue moves each frame
         state: "idle" // State can be: idle, outbound, inbound
@@ -46,7 +45,8 @@ const pill = {
     manager: 0,
     pick: 0,
     x: 0,
-    y: 0
+    y: 0,
+    lastingRate: 0
 }
 const cannonPill =
 {
@@ -55,8 +55,16 @@ const cannonPill =
     size: 30,
     speed: 3,
     hitCount: 0,
+    sizeBuff: 70,
+}
+
+const speedPill =
+{
+    x: 50,
+    y: 200, // Will be random
+    size: 30,
+    speed: 40,
     sizeBuff: 50,
-    lastingRate: 0
 }
 
 /**
@@ -64,6 +72,7 @@ const cannonPill =
  */
 function setup() {
     resetCannonPill()
+    resetSpeedPill()
 
     createCanvas(640, 480);
 
@@ -79,6 +88,7 @@ function draw() {
     moveCannonBall();
     drawCannon();
     drawCannonPill();
+    drawSpeedPill();
     checkCannonBallFlyOverlap();
     checkCannonBallPillOverlap()
 }
@@ -107,13 +117,7 @@ function drawFly() {
     pop();
 }
 
-function drawCannonPill() {
-    push();
-    noStroke();
-    fill("green");
-    ellipse(cannonPill.x, cannonPill.y, cannonPill.size);
-    pop();
-}
+
 
 /**
  * Resets the fly to the left with a random y
@@ -124,6 +128,26 @@ function resetFly() {
     fly.speed = random(4, 6)
 }
 
+function drawSpeedPill() {
+    push();
+    noStroke();
+    fill("red");
+    ellipse(speedPill.x, speedPill.y, speedPill.size);
+    pop();
+}
+
+function resetSpeedPill() {
+    speedPill.x = 2000;
+    speedPill.y = 5000;
+}
+
+function drawCannonPill() {
+    push();
+    noStroke();
+    fill("green");
+    ellipse(cannonPill.x, cannonPill.y, cannonPill.size);
+    pop();
+}
 function resetCannonPill() {
     cannonPill.x = 2000;
     cannonPill.y = 5000;
@@ -131,14 +155,20 @@ function resetCannonPill() {
 
 
 function spawnPill() {
-    pill.pick = 1
-    pill.x = random(10, 400)
-    pill.y = random(10, 400)
+    pill.pick = random(0, 1)
+
+    pill.x = random(10, 630)
+    pill.y = random(10, 390)
 
     //spawns cannon pill
-    if (pill.pick == 1) {
+    if (pill.pick >= 0.5) {
         cannonPill.x = pill.x
         cannonPill.y = pill.y
+    }
+
+    if (pill.pick <= 0.49) {
+        speedPill.x = pill.x
+        speedPill.y = pill.y
     }
 }
 
@@ -218,9 +248,17 @@ function checkCannonBallFlyOverlap() {
         }
         // makes the pill wear off after 5 flys killed
         if (cannon.cannonball.size == cannonPill.sizeBuff) {
-            cannonPill.lastingRate += 1
-            if (cannonPill.lastingRate === 5) {
-                cannon.cannonball.size = 20
+            pill.lastingRate += 1
+            if (pill.lastingRate === 5) {
+                cannon.cannonball.size = 35
+                pill.lastingRate = 0
+            }
+        }
+        if (cannon.cannonball.speed == speedPill.speed) {
+            pill.lastingRate += 1
+            if (pill.lastingRate === 5) {
+                cannon.cannonball.speed = 20
+                pill.lastingRate = 0
             }
         }
     }
@@ -238,6 +276,18 @@ function checkCannonBallPillOverlap() {
         // gives size buff to cannonball
         cannon.cannonball.size = cannonPill.sizeBuff;
         resetCannonPill()
+    }
+
+    const sPillD = dist(cannon.cannonball.x, cannon.cannonball.y, speedPill.x, speedPill.y);
+    // Check if it's an overlap
+    const sPillEaten = (sPillD < cannon.cannonball.size / 2 + speedPill.size / 2);
+
+    if (sPillEaten) {
+        // Bring back the tongue
+        cannon.cannonball.state = "inbound";
+        // gives size buff to cannonball
+        cannon.cannonball.speed = speedPill.speed;
+        resetSpeedPill()
     }
 }
 
