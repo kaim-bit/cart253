@@ -33,14 +33,66 @@ const cannon = {
     }
 };
 
+
+const menu = {
+    state: "Start",
+    background: "cyan"
+}
+
+const allScores = {
+    flyPassed: 0,
+    flyHit: 0,
+    highscore: 0,
+    gameLost: false
+}
+
+const startButton = {
+    x: 200,
+    y: 200,
+    size: 20,
+    velocity: {
+        x: 1,
+        y: 1
+    }
+}
+
+const menuButton = {
+    x: 200,
+    y: 200,
+    size: 20,
+    velocity: {
+        x: 1,
+        y: 1
+    }
+
+}
+
+const instructionButton = {
+    x: 200,
+    y: 180,
+    size: 20,
+    velocity: {
+        x: 1,
+        y: 1
+    }
+
+}
+
+const user = {
+    x: undefined, // will be mouseX
+    y: undefined, // will be mouseY
+    size: 10,
+    fill: "#000000"
+};
 // Our fly
 // Has a position, size, and speed of horizontal movement
 const fly = {
     x: 0,
     y: 200, // Will be random
     size: 10,
-    speed: 3
+    speed: 3 // will change
 };
+
 const pill = {
     manager: 0,
     pick: 0,
@@ -81,17 +133,141 @@ function setup() {
 }
 
 function draw() {
-    background("#87ceeb");
-    moveFly();
-    drawFly();
-    moveCannon();
-    moveCannonBall();
-    drawCannon();
-    drawCannonPill();
-    drawSpeedPill();
-    checkCannonBallFlyOverlap();
-    checkCannonBallPillOverlap()
+
+    if (menu.state === "Start") {
+        allScores.gameLost = false
+        background(menu.background)
+        const p = random();
+
+        if (p < 0.1) {
+            startButton.velocity.x = random(-3, 3);
+            startButton.velocity.y = random(-3, 3);
+        }
+        startButton.x += startButton.velocity.x;
+        startButton.y += startButton.velocity.y;
+
+        startButton.x = constrain(startButton.x, 0, 560)
+        startButton.y = constrain(startButton.y, 0, 380)
+
+        const i = random();
+
+        if (i < 0.1) {
+            instructionButton.velocity.x = random(-3, 3);
+            instructionButton.velocity.y = random(-3, 3);
+        }
+        instructionButton.x += instructionButton.velocity.x;
+        instructionButton.y += instructionButton.velocity.y;
+
+        instructionButton.x = constrain(instructionButton.x, 0, 560)
+        instructionButton.y = constrain(instructionButton.y, 0, 380)
+        menuLogic()
+        moveUser()
+        drawUser()
+        drawStartButton()
+        drawInstructionButton()
+    }
+    if (menu.state === "Instructions") {
+        background("#87ceeb");
+
+        const s = random();
+
+        if (s < 0.1) {
+            menuButton.velocity.x = random(-3, 3);
+            menuButton.velocity.y = random(-3, 3);
+        }
+        menuButton.x += menuButton.velocity.x;
+        menuButton.y += menuButton.velocity.y;
+
+        menuButton.x = constrain(menuButton.x, 0, 560)
+        menuButton.y = constrain(menuButton.y, 0, 380)
+
+        moveUser()
+        drawMenuButton()
+        instructionsLogic()
+
+
+    }
+
+    if (menu.state === "Game") {
+        background("cyan");
+        moveFly();
+        drawFly();
+        moveCannon();
+        moveCannonBall();
+        drawCannon();
+        drawCannonPill();
+        drawSpeedPill();
+        checkCannonBallFlyOverlap();
+        checkCannonBallPillOverlap()
+        drawScore()
+        drawHits()
+        if (allScores.gameLost) {
+            allScores.highscore = allScores.flyHit
+            allScores.flyHit = 0
+            allScores.flyPassed = 0
+            allScores.gameLost = true
+            menu.state = "Start"
+        }
+
+
+    }
+
 }
+
+
+
+
+
+function drawUser() {
+    push();
+    noStroke();
+    fill(user.fill);
+    ellipse(user.x, user.y, user.size);
+    pop();
+}
+function drawStartButton() {
+    fill("black");
+    rect(startButton.x, startButton.y, startButton.size)
+
+    text("Start", startButton.x - 2, startButton.y - 20, 40)
+}
+function drawMenuButton() {
+    fill("red");
+    rect(menuButton.x, menuButton.y, menuButton.size)
+    noStroke()
+
+    text("Menu", menuButton.x - 5, menuButton.y - 20, 40)
+}
+function drawInstructionButton() {
+    fill("yellow");
+    rect(instructionButton.x, instructionButton.y, instructionButton.size)
+    noStroke()
+
+    fill("black")
+    text("Instructions", instructionButton.x - 20, instructionButton.y - 20, 40)
+}
+
+function drawScore() {
+    push()
+    textSize(20)
+    textStyle(BOLD)
+    fill("black")
+    text(allScores.flyHit + " FLIES KILLED!", 250, 30, 200)
+    pop()
+}
+function drawHits() {
+    push()
+    textSize(40)
+    textStyle(BOLD)
+    fill("red")
+    text(allScores.flyPassed, 580, 193, 10)
+    text("_", 590, 197, 10)
+    text("20", 580, 240, 10)
+    pop()
+
+}
+
+
 
 /**
  * Moves the fly according to its speed
@@ -102,7 +278,11 @@ function moveFly() {
     fly.x += fly.speed;
     // Handle the fly going off the canvas
     if (fly.x > width) {
+        allScores.flyPassed += 1
         resetFly();
+        if (allScores.flyPassed == 5) {
+            allScores.gameLost = true
+        }
     }
 }
 
@@ -179,6 +359,11 @@ function moveCannon() {
     cannon.body.x = mouseX;
 }
 
+function moveUser() {
+    user.x = mouseX;
+    user.y = mouseY;
+}
+
 /**
  * Handles moving the rock based on where the frog is
  */
@@ -229,6 +414,29 @@ function drawCannon() {
     pop();
 }
 
+function menuLogic() {
+    // Calculate distance between circles' centres
+    const dToStart = dist(startButton.x, startButton.y, user.x, user.y);
+    const dToInstruct = dist(instructionButton.x, instructionButton.y, user.x, user.y)
+
+    const overStart = (dToStart < startButton.size / 2 + user.size / 2);
+    const overInstruct = (dToInstruct < instructionButton.size / 2 + user.size / 2);
+    if (overStart) {
+        menu.state = "Game"
+    }
+    if (overInstruct) {
+        menu.state = "Instructions"
+    }
+}
+
+function instructionsLogic() {
+    const dToMenu = dist(menuButton.x, menuButton.y, user.x, user.y)
+    const overMenu = (dToMenu < menuButton.size / 2 + user.size / 2);
+    if (overMenu) {
+        menu.state = "Start"
+    }
+}
+
 /**
  * Handles the tongue overlapping the fly
  */
@@ -238,6 +446,7 @@ function checkCannonBallFlyOverlap() {
     // Check if it's an overlap
     const eaten = (d < cannon.cannonball.size / 2 + fly.size / 2);
     if (eaten) {
+        allScores.flyHit += 1
         // Reset the fly
         resetFly();
         pill.manager += 1;
