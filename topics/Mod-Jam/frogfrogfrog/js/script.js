@@ -160,8 +160,8 @@ function draw() {
 
         instructionButton.x = constrain(instructionButton.x, 0, 560)
         instructionButton.y = constrain(instructionButton.y, 0, 380)
-        menuLogic()
         moveUser()
+        menuLogic()
         drawUser()
         drawStartButton()
         drawInstructionButton()
@@ -205,8 +205,9 @@ function draw() {
             allScores.highscore = allScores.flyHit
             allScores.flyHit = 0
             allScores.flyPassed = 0
-            allScores.gameLost = true
             menu.state = "Start"
+            allScores.gameLost = false
+
         }
 
 
@@ -280,7 +281,7 @@ function moveFly() {
     if (fly.x > width) {
         allScores.flyPassed += 1
         resetFly();
-        if (allScores.flyPassed == 5) {
+        if (allScores.flyPassed == 20) {
             allScores.gameLost = true
         }
     }
