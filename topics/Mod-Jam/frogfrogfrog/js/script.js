@@ -78,6 +78,24 @@ const instructionButton = {
 
 }
 
+const instructionText = {
+    text1x: 220,
+    text1y: 25,
+    text1size: 200,
+    text1text: "CLICK TO SHOOT, DONT LET THE EVIL FLIES IN TO YOUR SHIP, SHOOT THEM WITH YOUR MIGHTY CANNON, THERES PILLS MATEY, GREEN FOR SIZE AND RED FOR SPEED.",
+
+    text2x: 220,
+    text2y: 155,
+    text2size: 200,
+    text2text: "FLIES NEED A BREAK TOO, I WILL HAVE A SHOP OPEN FOR YOU MATEY EVERY 20 FLIES, REMEMBER AYE THESE SCALLYWAGS ARE GOING TO GET MORE ANGRY, AFTERALL WE GOT THEIR LOOT HAHAHAHHAHAHAH!!!",
+
+    text3x: 220,
+    text3y: 300,
+    text3size: 200,
+    text3text: "PLEASE MATEY, WHATEVER YE DO DONT LET THEM FLIES IN, EH I MIGHT BE ABLE TO TAKE DOWN 19 BUT IF 20 GETS THROUGH THE DAMN BLOODY GATE WE ARE FINISHED! GOOD SHOOTING MATEY!!!"
+
+}
+
 const user = {
     x: undefined, // will be mouseX
     y: undefined, // will be mouseY
@@ -167,7 +185,8 @@ function draw() {
         drawInstructionButton()
     }
     if (menu.state === "Instructions") {
-        background("#87ceeb");
+        background("cyan");
+        drawInstructions()
 
         const s = random();
 
@@ -182,6 +201,7 @@ function draw() {
         menuButton.y = constrain(menuButton.y, 0, 380)
 
         moveUser()
+        drawUser()
         drawMenuButton()
         instructionsLogic()
 
@@ -189,6 +209,15 @@ function draw() {
     }
 
     if (menu.state === "Game") {
+        if (allScores.flyPassed == 20) {
+            allScores.gameLost = true
+            if (allScores.gameLost == true) {
+                allScores.highscore = allScores.flyHit
+                allScores.flyHit = 0
+                allScores.flyPassed = 0
+                menu.state === "Lost"
+            }
+        }
         background("cyan");
         moveFly();
         drawFly();
@@ -201,23 +230,48 @@ function draw() {
         checkCannonBallPillOverlap()
         drawScore()
         drawHits()
-        if (allScores.gameLost) {
-            allScores.highscore = allScores.flyHit
-            allScores.flyHit = 0
-            allScores.flyPassed = 0
-            menu.state = "Start"
-            allScores.gameLost = false
 
+    }
+    if (menu.state === "Shop") {
+        background("cyan");
+
+        const p = random();
+
+        if (p < 0.1) {
+            startButton.velocity.x = random(-3, 3);
+            startButton.velocity.y = random(-3, 3);
         }
+        startButton.x += startButton.velocity.x;
+        startButton.y += startButton.velocity.y;
 
+        startButton.x = constrain(startButton.x, 0, 560)
+        startButton.y = constrain(startButton.y, 0, 380)
 
+        drawStartButton()
+        moveUser()
+        drawUser()
+    }
+
+    if (menu.state === "Lost") {
+
+        background("blue");
+        const s = random();
+
+        if (s < 0.1) {
+            menuButton.velocity.x = random(-3, 3);
+            menuButton.velocity.y = random(-3, 3);
+        }
+        menuButton.x += menuButton.velocity.x;
+        menuButton.y += menuButton.velocity.y;
+
+        menuButton.x = constrain(menuButton.x, 0, 560)
+        menuButton.y = constrain(menuButton.y, 0, 380)
+
+        moveUser()
+        drawMenuButton()
     }
 
 }
-
-
-
-
 
 function drawUser() {
     push();
@@ -248,6 +302,19 @@ function drawInstructionButton() {
     text("Instructions", instructionButton.x - 20, instructionButton.y - 20, 40)
 }
 
+function drawInstructions() {
+    textSize(13)
+    textStyle(BOLD)
+    fill("black")
+    text(instructionText.text1text, instructionText.text1x, instructionText.text1y, instructionText.text1size)
+
+    fill("black")
+    text(instructionText.text2text, instructionText.text2x, instructionText.text2y, instructionText.text2size)
+
+    fill("black")
+    text(instructionText.text3text, instructionText.text3x, instructionText.text3y, instructionText.text3size)
+}
+
 function drawScore() {
     push()
     textSize(20)
@@ -265,7 +332,6 @@ function drawHits() {
     text("_", 590, 197, 10)
     text("20", 580, 240, 10)
     pop()
-
 }
 
 
@@ -281,9 +347,6 @@ function moveFly() {
     if (fly.x > width) {
         allScores.flyPassed += 1
         resetFly();
-        if (allScores.flyPassed == 20) {
-            allScores.gameLost = true
-        }
     }
 }
 
@@ -453,6 +516,9 @@ function checkCannonBallFlyOverlap() {
         pill.manager += 1;
         // Bring back the cannonball
         cannon.cannonball.state = "inbound";
+        if (allScores.flyHit % 20 === 0) {
+            menu.state === "Shop"
+        }
         if (pill.manager % 10 === 0) {
             spawnPill()
         }
@@ -460,14 +526,14 @@ function checkCannonBallFlyOverlap() {
         if (cannon.cannonball.size == cannonPill.sizeBuff) {
             pill.lastingRate += 1
             if (pill.lastingRate === 5) {
-                cannon.cannonball.size = 35
+                cannon.cannonball.size = - 35
                 pill.lastingRate = 0
             }
         }
         if (cannon.cannonball.speed == speedPill.speed) {
             pill.lastingRate += 1
             if (pill.lastingRate === 5) {
-                cannon.cannonball.speed = 20
+                cannon.cannonball.speed -= 20
                 pill.lastingRate = 0
             }
         }
@@ -484,7 +550,7 @@ function checkCannonBallPillOverlap() {
         // Bring back the tongue
         cannon.cannonball.state = "inbound";
         // gives size buff to cannonball
-        cannon.cannonball.size = cannonPill.sizeBuff;
+        cannon.cannonball.size += cannonPill.sizeBuff;
         resetCannonPill()
     }
 
