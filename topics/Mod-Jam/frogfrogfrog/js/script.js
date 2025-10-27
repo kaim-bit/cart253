@@ -108,7 +108,8 @@ const fly = {
     x: 0,
     y: 200, // Will be random
     size: 10,
-    speed: 3 // will change
+    speed: 3, // will change
+    waveDif: 1
 };
 
 const pill = {
@@ -125,7 +126,7 @@ const cannonPill =
     size: 30,
     speed: 3,
     hitCount: 0,
-    sizeBuff: 70,
+    sizeBuff: cannon.cannonball + 35,
 }
 
 const speedPill =
@@ -215,7 +216,7 @@ function draw() {
                 allScores.highscore = allScores.flyHit
                 allScores.flyHit = 0
                 allScores.flyPassed = 0
-                menu.state === "Lost"
+                menu.state = "Lost"
             }
         }
         background("cyan");
@@ -250,6 +251,7 @@ function draw() {
         drawStartButton()
         moveUser()
         drawUser()
+        menuLogic()
     }
 
     if (menu.state === "Lost") {
@@ -266,9 +268,10 @@ function draw() {
 
         menuButton.x = constrain(menuButton.x, 0, 560)
         menuButton.y = constrain(menuButton.y, 0, 380)
-
         moveUser()
+        drawUser()
         drawMenuButton()
+        instructionsLogic()
     }
 
 }
@@ -369,7 +372,7 @@ function drawFly() {
 function resetFly() {
     fly.x = 0;
     fly.y = random(0, 300);
-    fly.speed = random(4, 6)
+    fly.speed = random(4, 6 + fly.waveDif)
 }
 
 function drawSpeedPill() {
@@ -517,7 +520,9 @@ function checkCannonBallFlyOverlap() {
         // Bring back the cannonball
         cannon.cannonball.state = "inbound";
         if (allScores.flyHit % 20 === 0) {
-            menu.state === "Shop"
+            fly.waveDif += 1
+            menu.state = "Shop"
+
         }
         if (pill.manager % 10 === 0) {
             spawnPill()
