@@ -78,6 +78,28 @@ const instructionButton = {
 
 }
 
+const speedShopButton = {
+    x: 200,
+    y: 180,
+    size: 20,
+    velocity: {
+        x: 1,
+        y: 1
+    }
+
+}
+
+const sizeShopButton = {
+    x: 200,
+    y: 180,
+    size: 20,
+    velocity: {
+        x: 1,
+        y: 1
+    }
+
+}
+
 const instructionText = {
     text1x: 220,
     text1y: 25,
@@ -124,9 +146,9 @@ const cannonPill =
     x: 50,
     y: 200, // Will be random
     size: 30,
-    speed: 3,
     hitCount: 0,
-    sizeBuff: cannon.cannonball + 35,
+    sizeBuff: 35,
+    on: false
 }
 
 const speedPill =
@@ -134,8 +156,8 @@ const speedPill =
     x: 50,
     y: 200, // Will be random
     size: 30,
-    speed: 40,
-    sizeBuff: 50,
+    speedBuff: 15,
+    on: false
 }
 
 /**
@@ -236,22 +258,36 @@ function draw() {
     if (menu.state === "Shop") {
         background("cyan");
 
-        const p = random();
+        const Ss = random();
 
-        if (p < 0.1) {
-            startButton.velocity.x = random(-3, 3);
-            startButton.velocity.y = random(-3, 3);
+        if (Ss < 0.1) {
+            sizeShopButton.velocity.x = random(-3, 3);
+            sizeShopButton.velocity.y = random(-3, 3);
         }
-        startButton.x += startButton.velocity.x;
-        startButton.y += startButton.velocity.y;
+        sizeShopButton.x += sizeShopButton.velocity.x;
+        sizeShopButton.y += sizeShopButton.velocity.y;
 
-        startButton.x = constrain(startButton.x, 0, 560)
-        startButton.y = constrain(startButton.y, 0, 380)
+        sizeShopButton.x = constrain(sizeShopButton.x, 0, 560)
+        sizeShopButton.y = constrain(sizeShopButton.y, 0, 380)
 
-        drawStartButton()
+        const Sss = random();
+
+        if (Sss < 0.1) {
+            speedShopButton.velocity.x = random(-3, 3);
+            speedShopButton.velocity.y = random(-3, 3);
+        }
+        speedShopButton.x += sizeShopButton.velocity.x;
+        speedShopButton.y += sizeShopButton.velocity.y;
+
+        speedShopButton.x = constrain(speedShopButton.x, 0, 560)
+        speedShopButton.y = constrain(speedShopButton.y, 0, 380)
+
+
+        drawSizeShopButton()
+        drawSpeedShopButton()
         moveUser()
         drawUser()
-        menuLogic()
+        shopLogic()
     }
 
     if (menu.state === "Lost") {
@@ -268,6 +304,8 @@ function draw() {
 
         menuButton.x = constrain(menuButton.x, 0, 560)
         menuButton.y = constrain(menuButton.y, 0, 380)
+
+
         moveUser()
         drawUser()
         drawMenuButton()
@@ -303,6 +341,22 @@ function drawInstructionButton() {
 
     fill("black")
     text("Instructions", instructionButton.x - 20, instructionButton.y - 20, 40)
+}
+
+function drawSpeedShopButton() {
+    push();
+    noStroke();
+    fill("red");
+    ellipse(speedShopButton.x, speedShopButton.y, speedShopButton.size);
+    pop();
+}
+
+function drawSizeShopButton() {
+    push();
+    noStroke();
+    fill("green");
+    ellipse(sizeShopButton.x, sizeShopButton.y, sizeShopButton.size);
+    pop();
 }
 
 function drawInstructions() {
@@ -496,6 +550,23 @@ function menuLogic() {
     }
 }
 
+function shopLogic() {
+    // Calculate distance between circles' centres
+    const dToSpeed = dist(speedShopButton.x, speedShopButton.y, user.x, user.y);
+    const dToSize = dist(sizeShopButton.x, sizeShopButton.y, user.x, user.y)
+
+    const overSpeed = (dToSpeed < speedShopButton.size / 2 + user.size / 2);
+    const overSize = (dToSize < sizeShopButton.size / 2 + user.size / 2);
+    if (overSpeed) {
+        cannon.cannonball.speed + 15
+        menu.state = "Game"
+    }
+    if (overSize) {
+        cannon.cannonball.size += 15
+        menu.state = "Game"
+    }
+}
+
 function instructionsLogic() {
     const dToMenu = dist(menuButton.x, menuButton.y, user.x, user.y)
     const overMenu = (dToMenu < menuButton.size / 2 + user.size / 2);
@@ -528,18 +599,20 @@ function checkCannonBallFlyOverlap() {
             spawnPill()
         }
         // makes the pill wear off after 5 flys killed
-        if (cannon.cannonball.size == cannonPill.sizeBuff) {
+        if (cannonPill.on) {
             pill.lastingRate += 1
             if (pill.lastingRate === 5) {
-                cannon.cannonball.size = - 35
+                cannon.cannonball.size -= cannonPill.sizeBuff
                 pill.lastingRate = 0
+                cannonPill.on = false
             }
         }
-        if (cannon.cannonball.speed == speedPill.speed) {
+        if (speedPill.on) {
             pill.lastingRate += 1
             if (pill.lastingRate === 5) {
-                cannon.cannonball.speed -= 20
+                cannon.cannonball.speed -= speedPill.speedBuff
                 pill.lastingRate = 0
+                speedPill.on = false
             }
         }
     }
@@ -553,9 +626,11 @@ function checkCannonBallPillOverlap() {
 
     if (cPillEaten) {
         // Bring back the tongue
+        cannonPill.on = true
         cannon.cannonball.state = "inbound";
         // gives size buff to cannonball
         cannon.cannonball.size += cannonPill.sizeBuff;
+        cannonPill.on = true
         resetCannonPill()
     }
 
@@ -567,7 +642,8 @@ function checkCannonBallPillOverlap() {
         // Bring back the tongue
         cannon.cannonball.state = "inbound";
         // gives size buff to cannonball
-        cannon.cannonball.speed = speedPill.speed;
+        cannon.cannonball.speed += speedPill.speedBuff;
+        speedPill.on = true
         resetSpeedPill()
     }
 }
