@@ -17,28 +17,34 @@ function setup() {
     createCanvas(400, 400);
     // Create the ball
     for (let r = 0; r < 10; r++) {
-        let ball = createBall();
+        let ball = createBall(200, 200);
         ballS.push(ball);
     }
+    frameRate(1)
 
 }
 
 /**
  * Creates a random ball
  */
-function createBall() {
+function createBall(x, y,) {
     // Create a ball object with appropriate properties
+    const direction = {
+        x: mouseX + pmouseX,
+        y: mouseY + pmouseY,
+    }
     const newBall = {
         // Position and dimensions
-        x: 200,
-        y: 200,
-        size: 20,
+
+        x: x,
+        y: y,
+        size: 10,
         // Colour
         fill: "#000000",
         // Movement
         velocity: {
-            x: random(-5, 5),
-            y: random(-5, 5)
+            x: direction.x,
+            y: direction.y
         }
     };
     return newBall;
@@ -48,12 +54,18 @@ function createBall() {
  * Moves and draws the ball
  */
 function draw() {
+
     background("#87ceeb");
     for (let i = 0; i < ballS.length; i++) {
         moveBall(ballS[i]);
         bounceBall(ballS[i]);
         drawBall(ballS[i]);
     }
+
+    let ball = createBall(mouseX, mouseY);
+    console.log(pmouseX, pmouseY, mouseX, mouseY)
+    console.log(ball)
+    ballS.push(ball);
 }
 
 /**
@@ -76,10 +88,12 @@ function bounceBall(ball) {
     // Handle bouncing horizontally
     if (bounceX) {
         ball.velocity.x *= -1;
+        ball.fill = color(random(255), random(255), random(255));
     }
     // Handle bouncing vertically
     if (bounceY) {
         ball.velocity.y *= -1;
+        ball.fill = color(random(255), random(255), random(255));
     }
 }
 
@@ -95,8 +109,9 @@ function drawBall(ball) {
 }
 
 function mousePressed() {
-    for (let i = 0; i < 100; i++) {
-        let ball = createBall();
+    createBall(mouseX, mouseY);
+    for (let i = 0; i < 1000; i++) {
+        let ball = createBall(mouseX, mouseY);
         ballS.push(ball);
     }
 
