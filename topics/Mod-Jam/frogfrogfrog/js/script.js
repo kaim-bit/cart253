@@ -1,51 +1,58 @@
 /**
- * Frogfrogfrog
- * Pippin Barr
+ * Frogfrogfrog MOD JAM
+ * Pippin Barr and Kai Maquivar
  * 
- * A game of catching flies with your frog-tongue
+ * A game of shooting flies with cannonballs
  * 
  * Instructions:
- * - Move the frog with your mouse
- * - Click to launch the tongue
- * - Catch flies
+ * - Move the cannon with your mouse
+ * - Click to shoot a cannonball
+ * - kill flies
  * 
  * Made with p5
  * https://p5js.org/
  */
 "use strict";
 
-// Our frog
+// Our cannon
 const cannon = {
-    // The frog's body has a position and size
+    // The cannons body and lip, aswell as the position and size
     body: {
         x: 320,
         y: 520,
+        width: 75,
+        height: 150
+    },
+    lip: {
+        x: 0,
+        y: 100,
         size: 150
     },
-    // The frog's tongue has a position, size, speed, and state
+
+    // the cannonballs position, size, speed and state
     cannonball: {
         x: undefined,
         y: 480,
         size: 35,
         speed: 20,
-        // Determines how the tongue moves each frame
+        // Determines how the cannon ball moves each frame
         state: "idle" // State can be: idle, outbound, inbound
     }
-};
+}
 
-
+// menu variables for the menu
 const menu = {
     state: "Start",
     background: "cyan"
 }
-
+// all scores
 const allScores = {
     flyPassed: 0,
     flyHit: 0,
     highscore: 0,
     gameLost: false
 }
-
+// the button for the start of the game
 const startButton = {
     x: 200,
     y: 200,
@@ -55,7 +62,7 @@ const startButton = {
         y: 1
     }
 }
-
+// the button for the menu 
 const menuButton = {
     x: 200,
     y: 200,
@@ -66,7 +73,7 @@ const menuButton = {
     }
 
 }
-
+// the button for the instructions menu
 const instructionButton = {
     x: 200,
     y: 180,
@@ -77,7 +84,7 @@ const instructionButton = {
     }
 
 }
-
+// the button for the speed upgrade
 const speedShopButton = {
     x: 200,
     y: 180,
@@ -88,7 +95,7 @@ const speedShopButton = {
     }
 
 }
-
+// the button for the size upgrade
 const sizeShopButton = {
     x: 200,
     y: 180,
@@ -99,7 +106,7 @@ const sizeShopButton = {
     }
 
 }
-
+// instructions and there dimensions and text
 const instructionText = {
     text1x: 220,
     text1y: 25,
@@ -117,13 +124,14 @@ const instructionText = {
     text3text: "PLEASE MATEY, WHATEVER YE DO DONT LET THEM FLIES IN, EH I MIGHT BE ABLE TO TAKE DOWN 19 BUT IF 20 GETS THROUGH THE DAMN BLOODY GATE WE ARE FINISHED! GOOD SHOOTING MATEY!!!"
 
 }
-
+// the mouse
 const user = {
     x: undefined, // will be mouseX
     y: undefined, // will be mouseY
     size: 10,
     fill: "#000000"
 };
+
 // Our fly
 // Has a position, size, and speed of horizontal movement
 const fly = {
@@ -134,6 +142,7 @@ const fly = {
     waveDif: 1
 };
 
+//pill variables for the other pills
 const pill = {
     manager: 0,
     pick: 0,
@@ -141,6 +150,7 @@ const pill = {
     y: 0,
     lastingRate: 0
 }
+// size pill
 const cannonPill =
 {
     x: 50,
@@ -150,7 +160,7 @@ const cannonPill =
     sizeBuff: 35,
     on: false
 }
-
+// speed pill
 const speedPill =
 {
     x: 50,
@@ -159,7 +169,17 @@ const speedPill =
     speedBuff: 15,
     on: false
 }
+/**
+ * preloads the sounds for use
+ */
 
+let cannonballSound
+let hitSound
+function preload() {
+    soundFormats('mp3', 'ogg');
+    cannonballSound = loadSound('assets/sounds/powerful-cannon-shot-352459.mp3');
+    hitSound = loadSound('assets/sounds/metal-hit-sound-effect-241374.mp3');
+}
 /**
  * Creates the canvas and initializes the fly
  */
@@ -175,6 +195,9 @@ function setup() {
 
 function draw() {
 
+    /**
+     * the menu state of the game
+     */
     if (menu.state === "Start") {
         allScores.gameLost = false
         background(menu.background)
@@ -207,6 +230,10 @@ function draw() {
         drawStartButton()
         drawInstructionButton()
     }
+
+    /**
+   * the instuctions state of the game
+   */
     if (menu.state === "Instructions") {
         background("cyan");
         drawInstructions()
@@ -231,6 +258,9 @@ function draw() {
 
     }
 
+    /**
+   * the game state of the game
+   */
     if (menu.state === "Game") {
         if (allScores.flyPassed == 20) {
             allScores.gameLost = true
@@ -255,9 +285,13 @@ function draw() {
         drawHits()
 
     }
+
+    /**
+   * the shop state of the game
+   */
     if (menu.state === "Shop") {
         background("cyan");
-
+        //flying buttons
         const Ss = random();
 
         if (Ss < 0.1) {
@@ -270,7 +304,9 @@ function draw() {
         sizeShopButton.x = constrain(sizeShopButton.x, 0, 560)
         sizeShopButton.y = constrain(sizeShopButton.y, 0, 380)
 
+        //flying buttons
         const Sss = random();
+
 
         if (Sss < 0.1) {
             speedShopButton.velocity.x = random(-3, 3);
@@ -290,11 +326,18 @@ function draw() {
         shopLogic()
     }
 
+    /**
+   * the ending state of the game
+   */
     if (menu.state === "Lost") {
+        //resets upgrades and buffs
+        cannon.cannonball.size = 35
+        cannon.cannonball.speed = 20
 
         background("blue");
         const s = random();
 
+        //flying buttons
         if (s < 0.1) {
             menuButton.velocity.x = random(-3, 3);
             menuButton.velocity.y = random(-3, 3);
@@ -313,7 +356,9 @@ function draw() {
     }
 
 }
-
+/**
+* draws a circle around the cursor
+ */
 function drawUser() {
     push();
     noStroke();
@@ -321,12 +366,19 @@ function drawUser() {
     ellipse(user.x, user.y, user.size);
     pop();
 }
+/**
+* draws the start button in the shop and menu
+ */
 function drawStartButton() {
     fill("black");
     rect(startButton.x, startButton.y, startButton.size)
 
     text("Start", startButton.x - 2, startButton.y - 20, 40)
 }
+
+/**
+* draws the menu button in the ending and instructions
+ */
 function drawMenuButton() {
     fill("red");
     rect(menuButton.x, menuButton.y, menuButton.size)
@@ -334,6 +386,10 @@ function drawMenuButton() {
 
     text("Menu", menuButton.x - 5, menuButton.y - 20, 40)
 }
+
+/**
+* draws the instructions button in the menu
+ */
 function drawInstructionButton() {
     fill("yellow");
     rect(instructionButton.x, instructionButton.y, instructionButton.size)
@@ -343,6 +399,9 @@ function drawInstructionButton() {
     text("Instructions", instructionButton.x - 20, instructionButton.y - 20, 40)
 }
 
+/**
+* draws the speed upgrade button in the shop
+ */
 function drawSpeedShopButton() {
     push();
     noStroke();
@@ -351,6 +410,9 @@ function drawSpeedShopButton() {
     pop();
 }
 
+/**
+* draws the size upgrade button in the shop
+ */
 function drawSizeShopButton() {
     push();
     noStroke();
@@ -359,6 +421,9 @@ function drawSizeShopButton() {
     pop();
 }
 
+/**
+* draws the visual instructions in the instructions state
+ */
 function drawInstructions() {
     textSize(13)
     textStyle(BOLD)
@@ -372,6 +437,9 @@ function drawInstructions() {
     text(instructionText.text3text, instructionText.text3x, instructionText.text3y, instructionText.text3size)
 }
 
+/**
+* draws the visual score counter
+ */
 function drawScore() {
     push()
     textSize(20)
@@ -380,6 +448,10 @@ function drawScore() {
     text(allScores.flyHit + " FLIES KILLED!", 250, 30, 200)
     pop()
 }
+
+/**
+* draws the visual loss counter
+ */
 function drawHits() {
     push()
     textSize(40)
@@ -429,6 +501,9 @@ function resetFly() {
     fly.speed = random(4, 6 + fly.waveDif)
 }
 
+/**
+ * draws the phisical cannon speed pill
+ */
 function drawSpeedPill() {
     push();
     noStroke();
@@ -437,11 +512,17 @@ function drawSpeedPill() {
     pop();
 }
 
+/**
+ *  basically the visual destruction of the pill, and priming it for its next use
+ */
 function resetSpeedPill() {
     speedPill.x = 2000;
     speedPill.y = 5000;
 }
 
+/**
+ * draws the phisical cannon size pill
+ */
 function drawCannonPill() {
     push();
     noStroke();
@@ -449,12 +530,17 @@ function drawCannonPill() {
     ellipse(cannonPill.x, cannonPill.y, cannonPill.size);
     pop();
 }
+/**
+ *  basically the visual destruction of the pill, and priming it for its next use
+ */
 function resetCannonPill() {
     cannonPill.x = 2000;
     cannonPill.y = 5000;
 }
 
-
+/**
+ *  handles what pill is spawned and where.
+ */
 function spawnPill() {
     pill.pick = random(0, 1)
 
@@ -480,6 +566,9 @@ function moveCannon() {
     cannon.body.x = mouseX;
 }
 
+/**
+ * visually shows cursor movement
+ */
 function moveUser() {
     user.x = mouseX;
     user.y = mouseY;
@@ -527,14 +616,26 @@ function drawCannon() {
     pop();
 
 
-    // Draw the frog's body
+    // Draw the cannons body
     push();
-    fill("#00ff00");
+    fill("gray");
     noStroke();
-    ellipse(cannon.body.x, cannon.body.y, cannon.body.size);
+    rect(cannon.body.x - 40, cannon.body.y - 100, 75, 100)
     pop();
+
+    //draws the lip of the cannon and follows the body
+    push();
+    fill("black");
+    noStroke();
+    ellipse(cannon.body.x - 2, cannon.body.y - cannon.lip.y, 71, 10)
+    pop();
+
+
 }
 
+/**
+ * scanning to see which button on the menu is being touched, and what to do next if touched
+ */
 function menuLogic() {
     // Calculate distance between circles' centres
     const dToStart = dist(startButton.x, startButton.y, user.x, user.y);
@@ -549,7 +650,9 @@ function menuLogic() {
         menu.state = "Instructions"
     }
 }
-
+/**
+ * shop button scanner to determine when it is hovered over and what to do next, hover over green, size increase, hover over red, speed increase
+ */
 function shopLogic() {
     // Calculate distance between circles' centres
     const dToSpeed = dist(speedShopButton.x, speedShopButton.y, user.x, user.y);
@@ -567,6 +670,10 @@ function shopLogic() {
     }
 }
 
+
+/**
+ * intructions menu button scanner to determine when it is hovered over and what to do next
+ */
 function instructionsLogic() {
     const dToMenu = dist(menuButton.x, menuButton.y, user.x, user.y)
     const overMenu = (dToMenu < menuButton.size / 2 + user.size / 2);
@@ -576,14 +683,15 @@ function instructionsLogic() {
 }
 
 /**
- * Handles the tongue overlapping the fly
+ * Handles the cannonball and if its overlapping the fly
  */
 function checkCannonBallFlyOverlap() {
-    // Get distance from tongue to fly
+    // Get distance from ball to fly
     const d = dist(cannon.cannonball.x, cannon.cannonball.y, fly.x, fly.y);
     // Check if it's an overlap
     const eaten = (d < cannon.cannonball.size / 2 + fly.size / 2);
     if (eaten) {
+        hitSound.play()
         allScores.flyHit += 1
         // Reset the fly
         resetFly();
@@ -618,8 +726,11 @@ function checkCannonBallFlyOverlap() {
     }
 }
 
+/**
+ * Handles the cannonball and if its overlapping cannon ball pills
+ */
 function checkCannonBallPillOverlap() {
-    // Get distance from tongue to fly
+    // Get distance from tongue to size pill
     const cPillD = dist(cannon.cannonball.x, cannon.cannonball.y, cannonPill.x, cannonPill.y);
     // Check if it's an overlap
     const cPillEaten = (cPillD < cannon.cannonball.size / 2 + cannonPill.size / 2);
@@ -634,6 +745,7 @@ function checkCannonBallPillOverlap() {
         resetCannonPill()
     }
 
+    // Get distance from tongue to speed pill
     const sPillD = dist(cannon.cannonball.x, cannon.cannonball.y, speedPill.x, speedPill.y);
     // Check if it's an overlap
     const sPillEaten = (sPillD < cannon.cannonball.size / 2 + speedPill.size / 2);
@@ -641,18 +753,22 @@ function checkCannonBallPillOverlap() {
     if (sPillEaten) {
         // Bring back the tongue
         cannon.cannonball.state = "inbound";
-        // gives size buff to cannonball
+        // gives speed buff to cannonball
         cannon.cannonball.speed += speedPill.speedBuff;
         speedPill.on = true
+
+        //sends the pill out of the player view
         resetSpeedPill()
     }
 }
 
 /**
- * Launch the tongue on click (if it's not launched yet)
+ * Launch the cannonball on click (if it's not launched yet)
  */
 function mousePressed() {
     if (cannon.cannonball.state === "idle") {
         cannon.cannonball.state = "outbound";
+        cannonballSound.play()
+
     }
 }
