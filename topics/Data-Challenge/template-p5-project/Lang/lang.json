@@ -1,0 +1,9 @@
+{
+  "description": "a language translator code thing",
+  "en": [
+    "Click to generate a car name."
+  ],
+  "fr": [
+    "Cliquez pour générer un nom de voiture."
+  ]
+}
