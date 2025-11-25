@@ -180,7 +180,6 @@ function draw() {
             drawPChoice()
             drawRChoice()
             drawUser()
-            gameOneChoiceLogic()
 
             for (const particle of particles) {
                 updateParticle(particle);
@@ -378,8 +377,7 @@ function gameOneLoseLogic() {
     }
 }
 
-
-function gameOneChoiceLogic() {
+function mouseClicked() {
     const dToRock = dist(gameOneChoiceVariables.RChoiceX, gameOneChoiceVariables.RChoiceY, mouseX, mouseY);
     const dToPaper = dist(gameOneChoiceVariables.PChoiceX, gameOneChoiceVariables.PChoiceY, mouseX, mouseY)
     const dToScissors = dist(gameOneChoiceVariables.SChoiceX, gameOneChoiceVariables.SChoiceY, mouseX, mouseY)
@@ -394,10 +392,10 @@ function gameOneChoiceLogic() {
     if (overPaper) {
         gameOneVariables.playerChoice = "Paper"
         gameOneVariables.gameOneState = "Game"
-        console.log("startsd")
     }
     if (overScissors) {
         gameOneVariables.playerChoice = "Scissors"
         gameOneVariables.gameOneState = "Game"
     }
 }
+
