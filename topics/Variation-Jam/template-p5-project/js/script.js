@@ -7,6 +7,7 @@
 
 "use strict";
 let gameState = "Menu"
+let gameStateMouse = "Menu"
 const particles = []
 const user = {
     x: undefined, // will be mouseX
@@ -281,7 +282,7 @@ function draw() {
     if (gameState === "GameOne") {
 
         if (gameOneVariables.gameOneState === "Start") {
-
+            gameStateMouse = "GameOne"
             background("black")
             drawSChoice()
             drawPChoice()
@@ -522,44 +523,49 @@ function gameOneLoseLogic() {
 }
 
 function mouseClicked() {
-    const dToRockM = dist(menuVariables.M1X, menuVariables.M1Y, mouseX, mouseY);
-    const dToPaperM = dist(menuVariables.M2X, menuVariables.M2Y, mouseX, mouseY)
-    const dToScissorsM = dist(menuVariables.M3X, menuVariables.M3Y, mouseX, mouseY)
+    if (gameStateMouse === "Menu") {
+        const dToRockM = dist(menuVariables.M1X, menuVariables.M1Y, mouseX, mouseY);
+        const dToPaperM = dist(menuVariables.M2X, menuVariables.M2Y, mouseX, mouseY)
+        const dToScissorsM = dist(menuVariables.M3X, menuVariables.M3Y, mouseX, mouseY)
 
-    const overRockM = (dToRockM < menuVariables.size / 2 + user.size / 2);
-    const overPaperM = (dToPaperM < menuVariables.size + 100 / 2 + user.size / 2);
-    const overScissorsM = (dToScissorsM < menuVariables.size / 2 + user.size / 2)
+        const overRockM = (dToRockM < menuVariables.size / 2 + user.size / 2);
+        const overPaperM = (dToPaperM < menuVariables.size + 100 / 2 + user.size / 2);
+        const overScissorsM = (dToScissorsM < menuVariables.size / 2 + user.size / 2)
 
-    if (overRockM) {
-        gameOneVariables.gameOneState = "Start"
-        gameState = "GameOne"
-    }
-    if (overPaperM) {
-        gameState = "GameOne"
-    }
-    if (overScissorsM) {
-        gameState = "GameOne"
+        if (overRockM) {
+            gameOneVariables.gameOneState = "Start"
+            gameState = "GameOne"
+        }
+        else if (overPaperM) {
+            gameState = "GameOne"
+        }
+        else if (overScissorsM) {
+            gameState = "GameOne"
+        }
     }
 
-    const dToRock = dist(gameOneChoiceVariables.RChoiceX, gameOneChoiceVariables.RChoiceY, mouseX, mouseY);
-    const dToPaper = dist(gameOneChoiceVariables.PChoiceX, gameOneChoiceVariables.PChoiceY, mouseX, mouseY)
-    const dToScissors = dist(gameOneChoiceVariables.SChoiceX, gameOneChoiceVariables.SChoiceY, mouseX, mouseY)
+    if (gameStateMouse === "GameOne") {
+        const dToRock = dist(gameOneChoiceVariables.RChoiceX, gameOneChoiceVariables.RChoiceY, mouseX, mouseY);
+        const dToPaper = dist(gameOneChoiceVariables.PChoiceX, gameOneChoiceVariables.PChoiceY, mouseX, mouseY)
+        const dToScissors = dist(gameOneChoiceVariables.SChoiceX, gameOneChoiceVariables.SChoiceY, mouseX, mouseY)
 
 
-    const overRock = (dToRock < gameOneChoiceVariables.RChoiceW / 2 + user.size / 2);
-    const overPaper = (dToPaper < gameOneChoiceVariables.PChoiceW / 2 + user.size / 2);
-    const overScissors = (dToScissors < gameOneChoiceVariables.SChoiceW / 2 + user.size / 2)
-    if (overRock) {
-        gameOneVariables.playerChoice = "Rock"
-        gameOneVariables.gameOneState = "Game"
+        const overRock = (dToRock < gameOneChoiceVariables.RChoiceW / 2 + user.size / 2);
+        const overPaper = (dToPaper < gameOneChoiceVariables.PChoiceW / 2 + user.size / 2);
+        const overScissors = (dToScissors < gameOneChoiceVariables.SChoiceW / 2 + user.size / 2)
+        if (overRock) {
+            gameOneVariables.playerChoice = "Rock"
+            gameOneVariables.gameOneState = "Game"
+        }
+        else if (overPaper) {
+            gameOneVariables.playerChoice = "Paper"
+            gameOneVariables.gameOneState = "Game"
+        }
+        else if (overScissors) {
+            gameOneVariables.playerChoice = "Scissors"
+            gameOneVariables.gameOneState = "Game"
+        }
     }
-    if (overPaper) {
-        gameOneVariables.playerChoice = "Paper"
-        gameOneVariables.gameOneState = "Game"
-    }
-    if (overScissors) {
-        gameOneVariables.playerChoice = "Scissors"
-        gameOneVariables.gameOneState = "Game"
-    }
+
 }
 
