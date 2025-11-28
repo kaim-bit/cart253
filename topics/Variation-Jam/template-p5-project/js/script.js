@@ -6,13 +6,25 @@
  */
 
 "use strict";
-let gameState = "GameOne"
+let gameState = "Menu"
 const particles = []
 const user = {
     x: undefined, // will be mouseX
     y: undefined, // will be mouseY
     size: 10,
     fill: "#000000"
+}
+
+const menuVariables = {
+    M1X: 200,
+    M2X: 600,
+    M3X: 1000,
+
+    M1Y: 200,
+    M2Y: 400,
+    M3Y: 600,
+
+    size: 150,
 }
 const gameOneVariables = {
     gameOneState: "Start",
@@ -40,17 +52,24 @@ const gameOneChoiceVariables = {
     SChoiceW: 300,
 }
 
-
+let rMImg;
+let pMImg;
+let sMImg;
 let rImg;
 let pImg
 let sImg
-
 let funFont
+let coolFont
 function preload() {
+    coolFont = loadFont('assets/JellyjampersonaluseBold-Rpjev.otf')
     funFont = loadFont('assets/Extracalories-rgx88.otf')
     rImg = loadImage('assets/images/rock.png');
     pImg = loadImage('assets/images/paper.png');
     sImg = loadImage('assets/images/scissors.png');
+    rMImg = loadImage('assets/images/rockmenu.png');
+    pMImg = loadImage('assets/images/papermenu.png');
+    sMImg = loadImage('assets/images/scissorsM.png');
+
 }
 
 /**
@@ -68,18 +87,36 @@ function setup() {
 
 }
 
-function createParticle(ChoiceX, ChoiceY, ChoiceW, ChoiceH) {
-    let i = random(-20, 20)
-    const newParticle = {
-        x: i * random(0, width),
-        y: random(0, height),
-        size: random(10, 20),
-        velocity: {
-            x: i + random(-3, 3),
-            y: 3
-        }
-    };
-    return newParticle;
+function createParticle() {
+    if (gameState === "GameOne") {
+        let i = random(-20, 20)
+        const newParticle = {
+            x: i * random(0, width),
+            y: random(0, height),
+            size: random(10, 20),
+            velocity: {
+                x: i + random(-3, 3,),
+                y: 3
+            }
+        };
+        return newParticle;
+    }
+    else if (gameState === "Menu") {
+        let i = random(10, -10)
+        let c = random(2, 1)
+        const newParticle = {
+            x: i * random(0, width),
+            y: c * random(0, height),
+            size: random(10, 20),
+            velocity: {
+                x: i + random(-3, 20,),
+                y: 3
+            }
+        };
+        return newParticle;
+    }
+
+
 }
 
 function drawUser() {
@@ -89,6 +126,66 @@ function drawUser() {
     noStroke()
     fill("black")
     ellipse(user.x, user.y, user.size)
+}
+function drawMenu1Choice() {
+    push()
+    noStroke()
+    fill("darkgrey")
+    ellipse(menuVariables.M1X, menuVariables.M1Y, menuVariables.size + 10)
+    pop()
+    push()
+    noStroke()
+    fill("black")
+    ellipse(menuVariables.M1X, menuVariables.M1Y, menuVariables.size)
+    pop()
+    image(rMImg, menuVariables.M1X - 50, menuVariables.M1Y - 60, 100, 100)
+
+}
+
+function drawMenu2Choice() {
+    push()
+    noStroke()
+    fill("darkgrey")
+    ellipse(menuVariables.M2X, menuVariables.M2Y, menuVariables.size + 110)
+    pop()
+    push()
+    noStroke()
+    fill("black")
+    ellipse(menuVariables.M2X, menuVariables.M2Y, menuVariables.size + 100)
+    image(pMImg, menuVariables.M2X - 100, menuVariables.M2Y - 95, 200, 200)
+
+}
+
+function drawMenu3Choice() {
+    push()
+    noStroke()
+    fill("darkgrey")
+    ellipse(menuVariables.M3X, menuVariables.M3Y, menuVariables.size + 10)
+    pop()
+    push()
+    noStroke()
+    fill("black")
+    ellipse(menuVariables.M3X, menuVariables.M3Y, menuVariables.size)
+    image(sMImg, menuVariables.M3X - 70, menuVariables.M3Y - 75, 150, 150)
+}
+
+function drawMenuText() {
+
+    push()
+    noStroke()
+    fill("white")
+    textFont(funFont)
+    textSize(100)
+    text("Variation", 270, 150)
+    pop()
+
+    push()
+    noStroke()
+    fill("white")
+    textFont(funFont)
+    textSize(100)
+    text("Jam", 800, 300)
+    pop()
 }
 function drawSChoice() {
     push()
@@ -168,13 +265,23 @@ function drawSecretTimer() {
 */
 function draw() {
     if (gameState === "Menu") {
-        background('black');
+        background('white');
+
+
+        for (const particle of particles) {
+            updateParticle(particle);
+            drawParticle(particle);
+        }
+        drawMenu1Choice()
+        drawMenu2Choice()
+        drawMenu3Choice()
+        drawMenuText()
+
     }
     if (gameState === "GameOne") {
 
         if (gameOneVariables.gameOneState === "Start") {
 
-            createParticle(gameOneChoiceVariables.SChoiceX, gameOneChoiceVariables.SChoiceY, gameOneChoiceVariables.SChoiceW, gameOneChoiceVariables.SChoiceH)
             background("black")
             drawSChoice()
             drawPChoice()
@@ -253,7 +360,12 @@ function draw() {
                 gameOneVariables.timerY = 810
                 gameOneLoseLogic()
             }
-
+        }
+        if (gameOneVariables.gameOneState === "Lost") {
+            background("red")
+        }
+        if (gameOneVariables.gameOneState === "Won") {
+            background("green")
         }
     }
 
@@ -276,29 +388,61 @@ function draw() {
 }
 
 function updateParticle(particle) {
-    let l = random(-10, 10)
-    particle.x += particle.velocity.x * 0.05;
-    particle.y += particle.velocity.y * 0;
+    if (gameState === "Menu") {
+        let l = random(-10, 10)
+        particle.x += particle.velocity.x * 0.1;
+        particle.y += particle.velocity.y * 7;
 
-    // Wrap if needed
-    if (particle.x < 0) {
-        particle.x = width;
+        // Wrap if needed
+        if (particle.x < 0) {
+            particle.x = width;
+        }
+        else if (particle.x > width) {
+            particle.x = 0;
+        }
+        if (particle.y < 0) {
+            particle.y = height;
+        }
+        else if (particle.y > height) {
+            particle.y = 0;
+        }
     }
-    else if (particle.x > width) {
-        particle.x = 0;
+    if (gameState === "GameOne") {
+        let l = random(-10, 10)
+        particle.x += particle.velocity.x * 0.05;
+        particle.y += particle.velocity.y * 0;
+
+        // Wrap if needed
+        if (particle.x < 0) {
+            particle.x = width;
+        }
+        else if (particle.x > width) {
+            particle.x = 0;
+        }
+        if (particle.y < 0) {
+            particle.y = height;
+        }
+        else if (particle.y > height) {
+            particle.y = 0;
+        }
     }
-    if (particle.y < 0) {
-        particle.y = height;
-    }
-    else if (particle.y > height) {
-        particle.y = 0;
-    }
+
 }
 
 function drawParticle(particle) {
     push();
     noStroke();
-    fill(0, 0, 0, 200);
+    let r = 200, g = 0, b = 0;
+    if (gameState === 'Menu') {
+        r = 0; g = 0; b = 24;
+    } else if (gameState === 'GameOne') {
+        if (gameOneVariables.gameOneState === 'Start') {
+            r = 0; g = 0; b = 0;
+        } else if (gameOneVariables.gameOneState === 'Game') {
+            r = 0; g = 150; b = 200;
+        }
+    }
+    fill(r, g, b, 200);
     ellipse(particle.x, particle.y, particle.size);
     pop();
 }
@@ -316,13 +460,13 @@ function gameOneLoseLogic() {
             gameOneVariables.timerYS = -410
             gameOneVariables.computerPicked = false
             gameOneVariables.playerChoice = undefined
-            gameOneVariables.gameOneState = "Start"
+            gameOneVariables.gameOneState = "Lost"
         }
         if (newChoice === "Scissors") {
             gameOneVariables.timerYS = -410
             gameOneVariables.computerPicked = false
             gameOneVariables.playerChoice = undefined
-            gameOneVariables.gameOneState = "Start"
+            gameOneVariables.gameOneState = "Won"
         }
     }
 
@@ -334,7 +478,7 @@ function gameOneLoseLogic() {
             gameOneVariables.timerYS = -410
             gameOneVariables.computerPicked = false
             gameOneVariables.playerChoice = undefined
-            gameOneVariables.gameOneState = "Start"
+            gameOneVariables.gameOneState = "Won"
         }
 
         if (newChoice === "Paper") {
@@ -347,7 +491,7 @@ function gameOneLoseLogic() {
             gameOneVariables.timerYS = -410
             gameOneVariables.computerPicked = false
             gameOneVariables.playerChoice = undefined
-            gameOneVariables.gameOneState = "Start"
+            gameOneVariables.gameOneState = "Lost"
         }
 
     }
@@ -359,14 +503,14 @@ function gameOneLoseLogic() {
             gameOneVariables.timerYS = -410
             gameOneVariables.computerPicked = false
             gameOneVariables.playerChoice = undefined
-            gameOneVariables.gameOneState = "Start"
+            gameOneVariables.gameOneState = "Lost"
         }
 
         if (newChoice === "Paper") {
             gameOneVariables.timerYS = -410
             gameOneVariables.computerPicked = false
             gameOneVariables.playerChoice = undefined
-            gameOneVariables.gameOneState = "Start"
+            gameOneVariables.gameOneState = "Won"
         }
 
         if (newChoice === "Scissors") {
@@ -378,9 +522,29 @@ function gameOneLoseLogic() {
 }
 
 function mouseClicked() {
+    const dToRockM = dist(menuVariables.M1X, menuVariables.M1Y, mouseX, mouseY);
+    const dToPaperM = dist(menuVariables.M2X, menuVariables.M2Y, mouseX, mouseY)
+    const dToScissorsM = dist(menuVariables.M3X, menuVariables.M3Y, mouseX, mouseY)
+
+    const overRockM = (dToRockM < menuVariables.size / 2 + user.size / 2);
+    const overPaperM = (dToPaperM < menuVariables.size + 100 / 2 + user.size / 2);
+    const overScissorsM = (dToScissorsM < menuVariables.size / 2 + user.size / 2)
+
+    if (overRockM) {
+        gameOneVariables.gameOneState = "Start"
+        gameState = "GameOne"
+    }
+    if (overPaperM) {
+        gameState = "GameOne"
+    }
+    if (overScissorsM) {
+        gameState = "GameOne"
+    }
+
     const dToRock = dist(gameOneChoiceVariables.RChoiceX, gameOneChoiceVariables.RChoiceY, mouseX, mouseY);
     const dToPaper = dist(gameOneChoiceVariables.PChoiceX, gameOneChoiceVariables.PChoiceY, mouseX, mouseY)
     const dToScissors = dist(gameOneChoiceVariables.SChoiceX, gameOneChoiceVariables.SChoiceY, mouseX, mouseY)
+
 
     const overRock = (dToRock < gameOneChoiceVariables.RChoiceW / 2 + user.size / 2);
     const overPaper = (dToPaper < gameOneChoiceVariables.PChoiceW / 2 + user.size / 2);
