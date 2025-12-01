@@ -15,7 +15,24 @@ const user = {
     size: 10,
     fill: "#000000"
 }
-
+const paperPlayer = {
+    moveX: 0,
+    stepX: 100,
+    moveY: 0,
+    stepY: 100,
+    x: 100,
+    y: 100,
+    size: 50,
+}
+const paperFood = {
+    x: 2000,
+    y: 2000,
+    size: 50,
+}
+const paperPoison = {
+    poisonCount: [],
+    size: 50,
+}
 const menuVariables = {
     M1X: 200,
     M2X: 600,
@@ -38,6 +55,12 @@ const gameOneVariables = {
     computerPicked: false
 }
 
+const gameTwoVariables = {
+    score: 0,
+    eaten: false,
+
+}
+
 const gameOneChoiceVariables = {
     newCanvasOffset: 400,
     RChoiceX: 200,
@@ -52,7 +75,9 @@ const gameOneChoiceVariables = {
     SChoiceY: 300,
     SChoiceW: 300,
 }
-
+let gameTwoBackround
+let foodImg
+let poisonImg
 let rMImg;
 let pMImg;
 let sMImg;
@@ -62,6 +87,7 @@ let sImg
 let funFont
 let coolFont
 function preload() {
+
     coolFont = loadFont('assets/JellyjampersonaluseBold-Rpjev.otf')
     funFont = loadFont('assets/Extracalories-rgx88.otf')
     rImg = loadImage('assets/images/rock.png');
@@ -70,6 +96,9 @@ function preload() {
     rMImg = loadImage('assets/images/rockmenu.png');
     pMImg = loadImage('assets/images/papermenu.png');
     sMImg = loadImage('assets/images/scissorsM.png');
+    poisonImg = loadImage('assets/images/paperPoison.png')
+    foodImg = loadImage('assets/images/foodpaper.png')
+    gameTwoBackround = loadImage('assets/images/backroundforpaper.png')
 
 }
 
@@ -261,6 +290,36 @@ function drawSecretTimer() {
     rect(600, gameOneVariables.timerYS, 20,)
     pop()
 }
+
+function drawPaperPlayer() {
+    push()
+    noStroke()
+    fill("red")
+    ellipse(paperPlayer.x, paperPlayer.y, paperPlayer.size - 49)
+    image(sMImg, paperPlayer.x - 25, paperPlayer.y - 25, 50, 50)
+    pop()
+}
+
+function drawFood() {
+    push()
+    noStroke()
+    fill("white")
+    ellipse(paperFood.x, paperFood.y, paperFood.size - 49)
+    image(foodImg, paperFood.x - 25, paperFood.y - 25, 50, 50)
+    pop()
+}
+function drawPoison() {
+    for (let i = 0; i < paperPoison.poisonCount.length; i++) {
+        let paperP = paperPoison.poisonCount[i];
+        push()
+        noStroke()
+        fill("orange")
+        ellipse(paperP.x, paperP.y, paperPoison.size - 49)
+        image(poisonImg, paperP.x - 25, paperP.y - 25, 50, 50)
+        pop()
+    }
+}
+
 /**
  * every frame draws the scene
 */
@@ -374,6 +433,17 @@ function draw() {
 
 
     if (gameState === "GameTwo") {
+        background("black")
+        image(gameTwoBackround, 0, 0, 1200, 800)
+        scoreCount()
+        checkPoisonTouch()
+        eatPaperLogic()
+        drawFood()
+        drawPoison()
+        spawnFood()
+        spawnPoison()
+        drawPaperPlayer()
+
 
     }
     if (gameState === "GameThree") {
@@ -446,6 +516,57 @@ function drawParticle(particle) {
     fill(r, g, b, 200);
     ellipse(particle.x, particle.y, particle.size);
     pop();
+}
+function scoreCount() {
+    if (gameTwoVariables.score >= 20) {
+        gameState = "Menu"
+    }
+    push()
+    noStroke()
+    fill("black")
+    textFont("BOLD")
+    textSize(30)
+    text(gameTwoVariables.score + "/20", 1100, 15, 1200, 1200)
+    pop()
+}
+function keyPressed() {
+    if (key === 'w' && paperPlayer.y > 100) {
+        paperPlayer.y -= 100;
+    }
+    if (key === 's' && paperPlayer.y < 700) {
+        paperPlayer.y += 100;
+    }
+    if (key === 'a' && paperPlayer.x > 100) {
+        paperPlayer.x -= 100;
+    }
+    if (key === 'd' && paperPlayer.x < 1100) {
+        paperPlayer.x += 100;
+    }
+}
+
+function spawnFood() {
+    let spawnPosX
+    let spawnPosY
+    if (paperFood.y === 2000) {
+        spawnPosX = int(random(1, 11))
+        spawnPosY = int(random(1, 8))
+        paperFood.x = 100 * spawnPosX
+        paperFood.y = 100 * spawnPosY
+    }
+}
+
+function spawnPoison() {
+    let spawnPosX = int(random(1, 11))
+    let spawnPosY = int(random(1, 8))
+    if (gameTwoVariables.eaten) {
+        paperPoison.poisonCount.push({
+            x: 100 * spawnPosX,
+            y: 100 * spawnPosY
+        });
+        gameTwoVariables.eaten = false
+    }
+
+
 }
 function gameOneLoseLogic() {
 
@@ -522,6 +643,74 @@ function gameOneLoseLogic() {
     }
 }
 
+function spawnFoodSafely() {
+    let spawnPosX
+    let spawnPosY
+    let safe = false;
+
+    if (!safe) {
+        spawnPosX = int(random(1, 11));
+        spawnPosY = int(random(1, 7));
+
+        paperFood.x = 100 * spawnPosX;
+        paperFood.y = 100 * spawnPosY;
+
+        // Check against all poison
+        safe = true;
+        for (let i = 0; i < paperPoison.poisonCount.length; i++) {
+            const p = paperPoison.poisonCount[i];
+            const d = dist(p.x, p.y, paperFood.x, paperFood.y);
+            if (d < paperFood.size / 2 + paperPoison.size / 2) {
+                safe = false;
+                break; // exit loop, try another position
+            }
+        }
+    }
+}
+
+function checkPoisonTouch() {
+    for (let i = 0; i < paperPoison.poisonCount.length; i++) {
+        const p = paperPoison.poisonCount[i];
+
+        const c = dist(paperPlayer.x, paperPlayer.y, p.x, p.y);
+        const touchingPoison = c < (paperPlayer.size / 2 + paperPoison.size / 2);
+
+        if (touchingPoison) {
+            paperPlayer.x = 100
+            paperPlayer.y = 100
+            gameTwoVariables.score = 0
+            paperPoison.poisonCount = [];
+            gameState = "Menu";
+        }
+    }
+}
+
+function eatPaperLogic() {
+    const dToFood = dist(paperPlayer.x, paperPlayer.y, paperFood.x, paperFood.y)
+    const overFood = (dToFood < paperPlayer.size / 2 + paperFood.size / 2);
+
+    if (overFood) {
+        gameTwoVariables.score += 1
+        gameTwoVariables.eaten = true
+        spawnFoodSafely()
+
+    }
+
+    for (let i = 0; i < paperPoison.poisonCount.length; i++) {
+        const p = paperPoison.poisonCount[i];
+
+        const dToPoison = dist(p.x, p.y, paperFood.x, paperFood.y);
+        const foodOverPoison = (dToPoison < paperFood.size / 2 + paperPoison.size / 2);
+
+        if (foodOverPoison) {
+            let spawnPosX = int(random(1, 11));
+            let spawnPosY = int(random(1, 8));
+
+            paperFood.x = 100 * spawnPosX;
+            paperFood.y = 100 * spawnPosY;
+        }
+    }
+}
 function mouseClicked() {
     if (gameStateMouse === "Menu") {
         const dToRockM = dist(menuVariables.M1X, menuVariables.M1Y, mouseX, mouseY);
@@ -537,7 +726,7 @@ function mouseClicked() {
             gameState = "GameOne"
         }
         else if (overPaperM) {
-            gameState = "GameOne"
+            gameState = "GameTwo"
         }
         else if (overScissorsM) {
             gameState = "GameOne"
